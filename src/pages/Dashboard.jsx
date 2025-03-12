@@ -1,5 +1,6 @@
 import React from 'react';
 import Navbar from '../components/NavBar';
+import WhoCanUseSummarization from '../components/WhoCanUseSummarization';
 
 function Dashboard() {
     return (
@@ -27,17 +28,18 @@ function Dashboard() {
                             Search <span className="ml-2">🔍</span>
                         </button>
                         <button className="bg-blue-600 hover:bg-blue-700 text-white px-20 py-2 rounded-lg flex items-center space-x-2 cursor-pointer">
-                            Summarizer <span className="ml-2">📄</span>
+                            Summarizer <span 
+                            className="ml-2"
+                            >📄</span>
                         </button>
                     </div>
                 </div>
 
-                <div className='container'>
-                    <div className='tittle--second'>
-
-                    </div>
-                </div>
             </div>
+            
+           <div>
+                <WhoCanUseSummarization />
+           </div>
         </>
     );
 }
