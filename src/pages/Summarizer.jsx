@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 import pdfToText from 'react-pdftotext';
+import axios from 'axios';
 
 function Summarizer() {
   const [text, setText] = useState('');
   const [summary, setSummary] = useState('');
   const [pdfFile, setPdfFile] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
     if (file && file.type === 'application/pdf') {
       setPdfFile(file);
-      await extractTextFromPDF(file); 
+      await extractTextFromPDF(file);
     } else {
       alert('Please upload a valid PDF file.');
     }
@@ -20,10 +21,43 @@ function Summarizer() {
   const extractTextFromPDF = async (file) => {
     try {
       const text = await pdfToText(file);
-      setText(text); 
+      setText(text);
     } catch (error) {
       console.error('Error extracting text from PDF:', error);
       alert('Failed to extract text from PDF. Please try again.');
+    }
+  };
+
+  const summarizeText = async () => {
+    const apiKey = 'myapi'; 
+    const model = 'facebook/bart-large-cnn'; 
+
+    if (!text) {
+      alert('Please extract text from a PDF before summarizing.');
+      return;
+    }
+
+    setLoading(true); 
+
+    try {
+        const response = await axios.post(
+            `https://api-inference.huggingface.co/models/facebook/bart-large-cnn`,
+            { inputs: text },
+            {
+              headers: {
+                Authorization: `Bearer ${apiKey}`,
+                'Content-Type': 'application/json',
+              },
+            }
+      );
+
+      const summaryText = response.data[0].summary_text; // Extract the summary from the response
+      setSummary(summaryText); // Set the summary in the state
+    } catch (error) {
+      console.error('Error summarizing text:', error);
+      alert('Failed to summarize text. Please try again.');
+    } finally {
+      setLoading(false); // Reset loading state
     }
   };
 
@@ -62,11 +96,10 @@ function Summarizer() {
           </label>
           <button
             className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white rounded-sm cursor-pointer"
-            onClick={() => {
-              // You can implement summarization logic here if needed
-            }}
+            onClick={summarizeText} // Call the summarize function
+            disabled={loading} // Disable button while loading
           >
-            Run
+            {loading ? 'Summarizing...' : 'Run'}
           </button>
           <button
             className="py-2 px-5 border-2 border-purple-500 text-purple-500 hover:border-purple-600 rounded-sm cursor-pointer"
@@ -110,4 +143,4 @@ function Summarizer() {
   );
 }
 
- export default Summarizer;
+export default Summarizer;
