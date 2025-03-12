@@ -1,27 +1,18 @@
-import React from "react";
+import { Link } from 'react-router-dom';
 
 function Navbar() {
-
-
-
-  
-
-
   return (
-    <nav className="bg-white px-6 py-4 flex justify-between items-center">
-
-
-      <div className="flex items-center space-x-10">
+    <nav className="bg-white px-6 py-4 flex justify-between items-center shadow">
+      <div className="flex items-center space-x-6">
         <h1 className="text-xl font-bold">Briefos</h1>
-        <a href="#" className="hover:text-gray-900 text-blue-600">Dashboard</a>
-        <a href="#" className="hover:text-gray-300 text-gray-700">Summarizer</a>
-        <a href="#" className="hover:text-gray-300 text-gray-700">Search</a>
-        <a href="#" className="hover:text-gray-300 text-gray-700">Documentation</a>
+        <Link to="/" className="hover:text-gray-500 text-blue-600">Dashboard</Link>
+        <Link to="/summarizer" className="hover:text-gray-500">Summarizer</Link>
+        <Link to="/search" className="hover:text-gray-500">Search</Link>
+        <Link to="/documentation" className="hover:text-gray-500">Documentation</Link>
       </div>
 
-
       <div>
-        <a href="#" className="hover:text-gray-300">About Us</a>
+        <Link to="/about" className="hover:text-gray-500">About Us</Link>
       </div>
     </nav>
   );
