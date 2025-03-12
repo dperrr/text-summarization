@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import pdfToText from 'react-pdftotext';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 function Summarizer() {
   const [text, setText] = useState('');
@@ -14,7 +15,7 @@ function Summarizer() {
       setPdfFile(file);
       await extractTextFromPDF(file);
     } else {
-      alert('Please upload a valid PDF file.');
+      Swal.fire('Error', 'Please upload a valid PDF file.', 'error');
     }
   };
 
@@ -24,7 +25,7 @@ function Summarizer() {
       setText(text);
     } catch (error) {
       console.error('Error extracting text from PDF:', error);
-      alert('Failed to extract text from PDF. Please try again.');
+      Swal.fire('Error', 'Failed to extract text from PDF. Please try again.', 'error');
     }
   };
 
@@ -33,7 +34,7 @@ function Summarizer() {
     const model = 'facebook/bart-large-cnn'; 
 
     if (!text) {
-      alert('Please extract text from a PDF before summarizing.');
+      Swal.fire('Warning', 'Please extract text from a PDF before summarizing.', 'warning');
       return;
     }
 
@@ -51,13 +52,14 @@ function Summarizer() {
             }
       );
 
-      const summaryText = response.data[0].summary_text; // Extract the summary from the response
-      setSummary(summaryText); // Set the summary in the state
+      const summaryText = response.data[0].summary_text;
+      setSummary(summaryText);
+      Swal.fire('Success', 'Text summarized successfully!', 'success');
     } catch (error) {
       console.error('Error summarizing text:', error);
-      alert('Failed to summarize text. Please try again.');
+      Swal.fire('Error', 'Failed to summarize text. Please try again.', 'error');
     } finally {
-      setLoading(false); // Reset loading state
+      setLoading(false);
     }
   };
 
@@ -96,8 +98,8 @@ function Summarizer() {
           </label>
           <button
             className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white rounded-sm cursor-pointer"
-            onClick={summarizeText} // Call the summarize function
-            disabled={loading} // Disable button while loading
+            onClick={summarizeText}
+            disabled={loading}
           >
             {loading ? 'Summarizing...' : 'Run'}
           </button>
@@ -107,6 +109,7 @@ function Summarizer() {
               setText('');
               setSummary('');
               setPdfFile(null);
+              Swal.fire('Cleared', 'Input and output fields have been cleared.', 'info');
             }}
           >
             Clear
@@ -132,7 +135,10 @@ function Summarizer() {
           <div className="flex justify-end mt-2">
             <button 
               className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white rounded-sm cursor-pointer"
-              onClick={() => navigator.clipboard.writeText(summary)}
+              onClick={() => {
+                navigator.clipboard.writeText(summary);
+                Swal.fire('Copied', 'Summary copied to clipboard.', 'success');
+              }}
             >
               Copy 
             </button>
