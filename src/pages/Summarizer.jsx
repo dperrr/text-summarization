@@ -44,21 +44,29 @@ function Summarizer() {
           }
         },
         {
-          element: '#copy-button',
+          element: '#clear-button',
           popover: {
-            title: 'Step 4: Copy Summary',
-            description: 'Click here to copy the summary to your clipboard.',
+            title: 'Step 4: Clear All',
+            description: 'Click this to clear the text and summary fields.',
             position: 'bottom'
           }
         },
         {
-          element: '#clear-button',
-          popover: {
-            title: 'Step 5: Clear All',
-            description: 'Click this to clear the text and summary fields.',
-            position: 'bottom'
+            element: '#output-area',
+            popover: {
+              title: 'Step 6: Output will be shown here',
+              description: 'Your summarized text our output is in this area.',
+              position: 'bottom'
+            }
+          },
+        {
+            element: '#copy-button',
+            popover: {
+              title: 'Step 6: Copy Summary',
+              description: 'Click here to copy the summary to your clipboard.',
+              position: 'bottom'
+            }
           }
-        }
       ]
     });
     driverObj.drive();
@@ -183,6 +191,7 @@ function Summarizer() {
             className="w-full border rounded-md p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 min-h-[580px]"
             placeholder="Your summary will be output as a paragraph by default"
             value={summary}
+            id='output-area'
             readOnly
           />
 
