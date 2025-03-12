@@ -1,13 +1,68 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import pdfToText from 'react-pdftotext';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { driver } from "driver.js";
+import "driver.js/dist/driver.css";
 
 function Summarizer() {
   const [text, setText] = useState('');
   const [summary, setSummary] = useState('');
   const [pdfFile, setPdfFile] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    startDriver();
+  }, []);
+
+  const startDriver = () => {
+    const driverObj = driver({
+      showProgress: true,
+      steps: [
+        {
+          element: '#text-input',
+          popover: {
+            title: 'Step 1: Enter Text or Upload PDF',
+            description: 'You can manually enter text or upload a PDF file.',
+            position: 'bottom'
+          }
+        },
+        {
+            element: '#upload-btn',
+            popover: {
+              title: 'Step 2: Upload PDF File',
+              description: 'Click this button to upload PDF file.',
+              position: 'bottom'
+            }
+          },
+        {
+          element: '#run-button',
+          popover: {
+            title: 'Step 3: Summarize Text',
+            description: 'Click this button to summarize the text.',
+            position: 'bottom'
+          }
+        },
+        {
+          element: '#copy-button',
+          popover: {
+            title: 'Step 4: Copy Summary',
+            description: 'Click here to copy the summary to your clipboard.',
+            position: 'bottom'
+          }
+        },
+        {
+          element: '#clear-button',
+          popover: {
+            title: 'Step 5: Clear All',
+            description: 'Click this to clear the text and summary fields.',
+            position: 'bottom'
+          }
+        }
+      ]
+    });
+    driverObj.drive();
+  };
 
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
@@ -75,6 +130,7 @@ function Summarizer() {
         <h2 className="text-gray-700 font-medium">Input</h2>
         <div className="mt-2">
           <textarea
+            id="text-input"
             className="w-full border rounded-md p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 min-h-[580px]"
             placeholder="Write or upload a text to summarize..."
             value={text}
@@ -87,7 +143,7 @@ function Summarizer() {
         </div>
 
         <div className="flex justify-end space-x-2 mt-3">
-          <label className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white rounded-sm cursor-pointer">
+          <label id="upload-btn" className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white rounded-sm cursor-pointer">
             Upload
             <input
               type="file"
@@ -97,6 +153,7 @@ function Summarizer() {
             />
           </label>
           <button
+            id="run-button"
             className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white rounded-sm cursor-pointer"
             onClick={summarizeText}
             disabled={loading}
@@ -104,6 +161,7 @@ function Summarizer() {
             {loading ? 'Summarizing...' : 'Run'}
           </button>
           <button
+            id="clear-button"
             className="py-2 px-5 border-2 border-purple-500 text-purple-500 hover:border-purple-600 rounded-sm cursor-pointer"
             onClick={() => {
               setText('');
@@ -134,6 +192,7 @@ function Summarizer() {
 
           <div className="flex justify-end mt-2">
             <button 
+              id="copy-button"
               className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white rounded-sm cursor-pointer"
               onClick={() => {
                 navigator.clipboard.writeText(summary);
