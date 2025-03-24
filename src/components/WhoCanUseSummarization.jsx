@@ -3,22 +3,22 @@ import { Briefcase, Monitor, Globe, GraduationCap } from "lucide-react";
 
 const cardData = [
   {
-    icon: <Briefcase size={32} className="text-green-500" />,
+    icon: <Briefcase size={32} className="text-blue-500" />,
     title: "Professionals",
     description: "Focus on key points to drive actionable outcomes",
   },
   {
-    icon: <Monitor size={32} className="text-green-500" />,
+    icon: <Monitor size={32} className="text-blue-500" />,
     title: "Educators",
     description: "Condense lesson plans or draft study guides",
   },
   {
-    icon: <Globe size={32} className="text-green-500" />,
+    icon: <Globe size={32} className="text-blue-500" />,
     title: "Researchers",
     description: "Identify relevant sources or craft research notes",
   },
   {
-    icon: <GraduationCap size={32} className="text-green-500" />,
+    icon: <GraduationCap size={32} className="text-blue-500" />,
     title: "Students",
     description: "Conduct research or shorten study notes",
   },
@@ -27,7 +27,7 @@ const cardData = [
 function WhoCanUseSummarization() {
   return (
     <div className="w-full  py-10">
-      <h2 className="text-3xl font-bold text-center text-gray-800 mb-6 bg-pink-100 p-5">
+      <h2 className="text-3xl font-bold text-center text-gray-800 mb-6  p-10">
         Who Can Use Summarization?
       </h2>
       <div className="flex flex-wrap justify-center gap-6 px-6">
