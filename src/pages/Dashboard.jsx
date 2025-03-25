@@ -1,6 +1,8 @@
 import React from 'react';
 import Navbar from '../components/NavBar';
 import WhoCanUseSummarization from '../components/WhoCanUseSummarization';
+import Questions from '../components/Questions';
+import { Link } from "react-router";
 
 function Dashboard() {
     return (
@@ -24,21 +26,34 @@ function Dashboard() {
                 <div className="mt-6">
                     <h2 className="text-xl font-semibold mb-3">Quick Access to Key Features</h2>
                     <div className="flex space-x-4">
-                        <button className="bg-blue-600  hover:bg-blue-700 text-white px-20 py-2 rounded-lg flex items-center space-x-2 cursor-pointer">
+                        <Link className="bg-blue-600  hover:bg-blue-700 text-white px-20 py-2 rounded-lg flex items-center space-x-2 cursor-pointer"
+                        to={"/search"}>
                             Search <span className="ml-2">🔍</span>
-                        </button>
-                        <button className="bg-blue-600 hover:bg-blue-700 text-white px-20 py-2 rounded-lg flex items-center space-x-2 cursor-pointer">
+                        </Link>
+                        <Link className="bg-blue-600 hover:bg-blue-700 text-white px-20 py-2 rounded-lg flex items-center space-x-2 cursor-pointer"
+                        to={"/summarizer"}>
                             Summarizer <span 
                             className="ml-2"
                             >📄</span>
-                        </button>
+                        </Link>
                     </div>
                 </div>
 
             </div>
+
+           <div className='bg-white'>
             
-           <div>
                 <WhoCanUseSummarization />
+           </div>
+           <div className='py-10 w-full'>
+                <div className=''>
+                    <h2 className="text-3xl font-bold text-center text-gray-800 mb-6  p-5">
+                    Some commonly asked questions about summarizing tools
+                    </h2>
+                </div>
+                <div className='container flex justify-center m-auto items-center'>
+                    <Questions />
+                </div>
            </div>
         </>
     );

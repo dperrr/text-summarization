@@ -55,7 +55,7 @@ function Summarizer() {
             element: '#output-area',
             popover: {
               title: 'Step 6: Output will be shown here',
-              description: 'Your summarized text our output is in this area.',
+              description: 'Your summarized text or output will be shown in this area.',
               position: 'bottom'
             }
           },
