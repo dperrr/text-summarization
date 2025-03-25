@@ -2,7 +2,7 @@ import { Users, GraduationCap, BookOpen, Mail, User, Code, FileText, Palette, Da
 
 export default function AboutUs() {
   return (
-    <div className="container mx-auto px-4 py-12 max-w-6xl">
+    <div className="container mx-auto px-4 py-12 max-w-6xl md:pl-64">
       <div className="space-y-12">
         {/* Header Section */}
         <div className="text-center space-y-4">
@@ -54,7 +54,7 @@ export default function AboutUs() {
               <div className="p-6 space-y-4">
                 <div className="flex items-center gap-3">
                   <div className="bg-blue-100 p-2 rounded-full">
-                    <Palette className="h-5 w-5 text-blue-600" />
+                    <FileText className="h-5 w-5 text-blue-600" />
                   </div>
                   <h3 className="font-semibold text-lg">Patrick Ryan A. Zapanta</h3>
                 </div>

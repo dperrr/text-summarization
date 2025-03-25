@@ -34,7 +34,7 @@ function WhoCanUseSummarization() {
         {cardData.map((card, index) => (
           <div
             key={index}
-            className="bg-white shadow-md rounded-lg p-6 flex flex-col items-center w-64 text-center hover:rounded-2xl"
+            className="bg-white shadow-md rounded-lg p-6 flex flex-col items-center w-64 text-center transition hover:shadow-lg"
           >
             <div className="mb-3">{card.icon}</div>
             <h3 className="text-xl font-semibold text-gray-800">{card.title}</h3>

@@ -4,6 +4,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
+import { Sparkle } from 'lucide-react';
 
 function Summarizer() {
   const [text, setText] = useState('');
@@ -166,7 +167,7 @@ function Summarizer() {
             onClick={summarizeText}
             disabled={loading}
           >
-            {loading ? 'Summarizing...' : 'Run'}
+            {loading ? 'Summarizing...' : <span className='flex'><Sparkle className='mr-2'></Sparkle>Run</span>}
           </button>
           <button
             id="clear-button"
