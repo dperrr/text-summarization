@@ -5,7 +5,7 @@ import Summarizer from './pages/Summarizer.jsx';
 import Search from './pages/Search.jsx';
 import Documentation from './pages/Documentation.jsx';
 import AboutUs from "./pages/AboutUs.jsx"
-import Navbar from './components/NavBar';
+import Navbar from './components/Navbar.jsx';
 
 function App() {
   return (

@@ -4,7 +4,7 @@ import { Github, Twitter } from "lucide-react";
 
 export default function Footer() {
     return (
-        <footer className="bg-gray-900 text-white py-6 mt-8">
+        <footer className="bg-gray-900 text-white py-6 ">
             <div className="container mx-auto flex flex-col items-center justify-between px-4 md:flex-row">
                 <p className="text-sm text-gray-400">
                     &copy; {new Date().getFullYear()} TextSummarizer. All rights reserved.

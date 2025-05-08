@@ -2,16 +2,123 @@
 @import "tailwindcss";
 
 
-* {
-  font-family: 'Inter', sans-serif;
+:root {
+  --font-title: 'Poppins', sans-serif;
+  --font-body: 'Raleway', sans-serif;
+  --font-accent: 'Montserrat', sans-serif;
 }
 
 
 body{
   background-color: #F4F7FC;
+  /* background-color: #DFDBE5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='49' viewBox='0 0 28 49'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='hexagons' fill='%239333ea' fill-opacity='0.4' fill-rule='nonzero'%3E%3Cpath d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9zM0 15l12.98-7.5V0h-2v6.35L0 12.69v2.3zm0 18.5L12.98 41v8h-2v-6.85L0 35.81v-2.3zM15 0v7.5L27.99 15H28v-2.31h-.01L17 6.35V0h-2zm0 49v-8l12.99-7.5H28v2.31h-.01L17 42.15V49h-2z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); */
+  font-family: var(--font-body);
+  
+}
+
+
+
+h1, h2, h3, h4 {
+
+  font-family: var(--font-title);
 }
 
 .tittle--page {
   color: #162B4C !important;
+  font-family: var(--font-title);
 }
 
+.ngek {
+  background: linear-gradient(135deg, #7e22ce, #9333ea, #a855f7);
+  background-size: 400% 400%;
+  animation: gradientShift 8s ease infinite;
+  transition: all 0.3s ease-in-out;
+  color: white;
+  border-radius: 12px; 
+  padding: 1rem;       
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes blob {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -20px) scale(1.05);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.95);
+  }
+}
+
+.animate-blob {
+  animation: blob 12s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+.custom-shape-divider-bottom-1744218531 {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  transform: rotate(180deg);
+}
+
+.custom-shape-divider-bottom-1744218531 svg {
+  position: relative;
+  display: block;
+  width: calc(114% + 1.3px);
+  height: 121px;
+}
+
+.custom-shape-divider-bottom-1744218531 .shape-fill {
+  fill: #d949d9;
+}
+
+
+@keyframes gradientAnimation {
+  0% {
+      background-position: 0% 50%;
+  }
+  50% {
+      background-position: 100% 50%;
+  }
+  100% {
+      background-position: 0% 50%;
+  }
+}
+
+.animate-gradient {
+  animation: gradientAnimation 15s ease infinite;
+}
+.animated-bg {
+  background-color: #ece9f0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cg fill='%239C92AC' fill-opacity='0.4'%3E%3Cpolygon fill-rule='evenodd' points='8 4 12 6 8 8 6 12 4 8 0 6 4 4 6 0 8 4'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 120px 120px;
+  animation: bgMove 20s linear infinite;
+}
+
+@keyframes bgMove {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 120px 120px;
+  }
+}

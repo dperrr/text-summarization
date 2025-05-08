@@ -3,22 +3,22 @@ import { Briefcase, Monitor, Globe, GraduationCap } from "lucide-react";
 
 const cardData = [
   {
-    icon: <Briefcase size={32} className="text-blue-500" />,
+    icon: <Briefcase size={32} className="text-purple-600" />,
     title: "Professionals",
     description: "Focus on key points to drive actionable outcomes",
   },
   {
-    icon: <Monitor size={32} className="text-blue-500" />,
+    icon: <Monitor size={32} className="text-purple-600" />,
     title: "Educators",
     description: "Condense lesson plans or draft study guides",
   },
   {
-    icon: <Globe size={32} className="text-blue-500" />,
+    icon: <Globe size={32} className="text-purple-600" />,
     title: "Researchers",
     description: "Identify relevant sources or craft research notes",
   },
   {
-    icon: <GraduationCap size={32} className="text-blue-500" />,
+    icon: <GraduationCap size={32} className="text-purple-600" />,
     title: "Students",
     description: "Conduct research or shorten study notes",
   },

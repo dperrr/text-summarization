@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
 import { Sparkle } from 'lucide-react';
+import ClipLoader from "react-spinners/ClipLoader";
 
 function Summarizer() {
   const [text, setText] = useState('');
@@ -94,7 +95,7 @@ function Summarizer() {
   };
 
   const summarizeText = async () => {
-    const apiKey = 'myapi'; 
+    const apiKey = ''; 
     const model = 'facebook/bart-large-cnn'; 
 
     if (!text) {
@@ -128,13 +129,14 @@ function Summarizer() {
   };
 
   return (
-    <div className="flex flex-col items-center min-h-screen px-6 py-10 bg-gray-100">
-      <div className="bg-white shadow-md px-1 py-2 rounded-2xl border w-full max-w-5xl">
-        <h2 className="text-lg font-medium text-gray-700 text-center">
+    <div className="flex flex-col items-center min-h-screen px-6 py-10 mt-20 ">
+      <div className="bg-white shadow-md px-1 py-2 rounded-2xl  w-full max-w-5xl ngek">
+        <h2 className="text-lg font-medium text-white text-center ">
           Briefos - Fast, accurate text summarization and search using TD-IDF and Hybrid Summarization
         </h2>
       </div>
 
+      <div className='grid grid-cols-2 w-full '>
       <div className="py-5 px-6 w-full max-w-5xl">
         <h2 className="text-gray-700 font-medium">Input</h2>
         <div className="mt-2">
@@ -152,7 +154,7 @@ function Summarizer() {
         </div>
 
         <div className="flex justify-end space-x-2 mt-3">
-          <label id="upload-btn" className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white rounded-sm cursor-pointer">
+          <label id="upload-btn" className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white rounded-sm cursor-pointer transition hover:shadow-lg shadow-purple-800">
             Upload
             <input
               type="file"
@@ -163,15 +165,15 @@ function Summarizer() {
           </label>
           <button
             id="run-button"
-            className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white rounded-sm cursor-pointer"
+            className="py-2 px-5 bg-purple-500 transition hover:shadow-lg shadow-purple-800 text-white rounded-sm cursor-pointer"
             onClick={summarizeText}
             disabled={loading}
           >
-            {loading ? 'Summarizing...' : <span className='flex'><Sparkle className='mr-2'></Sparkle>Run</span>}
+            {loading ? <ClipLoader color="#fff"/> : <span className='flex'><Sparkle className='mr-2'></Sparkle>Run</span>}
           </button>
           <button
             id="clear-button"
-            className="py-2 px-5 border-2 border-purple-500 text-purple-500 hover:border-purple-600 rounded-sm cursor-pointer"
+            className="py-2 px-5 border-2 border-purple-500 text-purple-500 transition hover:shadow-lg shadow-purple-800 rounded-sm cursor-pointer"
             onClick={() => {
               setText('');
               setSummary('');
@@ -214,6 +216,8 @@ function Summarizer() {
           </div>
         </div>
       </div>
+      </div>
+     
     </div>
   );
 }
