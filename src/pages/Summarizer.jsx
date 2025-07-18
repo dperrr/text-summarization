@@ -6,6 +6,8 @@ import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
 import { Sparkle } from 'lucide-react';
 import ClipLoader from "react-spinners/ClipLoader";
+import TfidfHeatmap from './TfidfHeatmap';
+
 
 function Summarizer() {
   const [text, setText] = useState('');
@@ -13,12 +15,15 @@ function Summarizer() {
   const [pdfFile, setPdfFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [keywords, setKeywords] = useState([]);
+  const [keywordsWithScores, setKeywordsWithScores] = useState([]);
+  const [summarySentences, setSummarySentences] = useState([]);
+  const [showHeatmap, setShowHeatmap] = useState(false);
 
   useEffect(() => {
     startDriver();
   }, []);
 
-  // TF-IDF Implementation
+  // TF-IDF Algorithm
   const calculateTFIDF = (documents) => {
     const tfs = documents.map(doc => {
       const words = doc.toLowerCase().split(/\s+/);
@@ -61,7 +66,7 @@ function Summarizer() {
     return tfidf;
   };
 
-  // Aho-Corasick Implementation
+  // Aho-Corasick Algorithm
   class AhoCorasick {
     constructor(keywords) {
       this.root = this.buildTrie(keywords);
@@ -136,17 +141,17 @@ function Summarizer() {
     }
   }
 
-  // Modify your generateSummary function to include this:
 const generateSummary = () => {
   setLoading(true);
-  
+
   try {
-    const sentences = text.split(/[.!?]+/)
+    const sentences = text
+      .split(/(?<=[.!?])\s+(?=[A-Z])/)
       .map(s => s.trim())
-      .filter(s => s.length > 0);
+      .filter(s => s.length > 20); 
 
     const tfidfScores = calculateTFIDF(sentences);
-    
+
     // Get keywords with scores
     const keywordsWithScores = Object.entries(
       tfidfScores.reduce((acc, score) => {
@@ -155,35 +160,63 @@ const generateSummary = () => {
         });
         return acc;
       }, {})
-    ).sort((a, b) => b[1] - a[1]).slice(0, 15);
+    )
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 15)
+      .filter(([word]) => word.length > 2); 
 
     setKeywords(keywordsWithScores.map(([word]) => word));
+    setKeywordsWithScores(keywordsWithScores);
 
     const ac = new AhoCorasick(keywordsWithScores.map(([word]) => word));
-    
+
     const scoredSentences = sentences.map((sentence, index) => {
-      const matches = ac.search(sentence.toLowerCase());
+      const cleanSentence = sentence.toLowerCase().replace(/[^\w\s]/g, ' ');
+      const matches = ac.search(cleanSentence);
       const uniqueMatches = new Set(matches.flatMap(m => m.keywords));
-      
+
+      // Sum actual TF-IDF keyword scores
+      const keywordScore = [...uniqueMatches]
+        .map(k => keywordsWithScores.find(([word]) => word === k)?.[1] || 0)
+        .reduce((a, b) => a + b, 0);
+
       return {
         text: sentence,
-        score: uniqueMatches.size,
+        score: keywordScore,
         positionWeight: 1 + (1 / (index + 1)),
         keywords: [...uniqueMatches]
       };
     });
 
-    const summarySentences = scoredSentences
+    // Sort and select top N
+    const topSentences = scoredSentences
       .sort((a, b) => (b.score * b.positionWeight) - (a.score * a.positionWeight))
-      .slice(0, Math.max(3, Math.floor(sentences.length / 3)))
-      .sort((a, b) => sentences.indexOf(a.text) - sentences.indexOf(b.text));
+      .slice(0, Math.max(3, Math.floor(sentences.length / 3)));
 
-    const summaryText = summarySentences.map(s => s.text).join('. ') + '.';
+    // De-duplicate near-sentences
+    const seen = new Set();
+    const dedupedSentences = topSentences.filter(s => {
+      const key = s.text.toLowerCase().slice(0, 40);
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+
+    // Restore original order
+    const finalSentences = dedupedSentences.sort(
+      (a, b) => sentences.indexOf(a.text) - sentences.indexOf(b.text)
+    );
+
+    setSummarySentences(finalSentences);
+
+    // Strip punctuation, re-append cleanly
+    const summaryText = finalSentences
+      .map(s => s.text.trim().replace(/[.!?]+$/, '') + '.')
+      .join(' ');
+
     setSummary(summaryText);
 
-    // Show the analysis popup
-    showResultsPopup(keywordsWithScores, summarySentences);
-
+    showResultsPopup(keywordsWithScores, finalSentences);
   } catch (error) {
     console.error("Summarization error:", error);
     Swal.fire('Error', 'Failed to generate summary. Please try again.', 'error');
@@ -191,6 +224,7 @@ const generateSummary = () => {
     setLoading(false);
   }
 };
+
 
   const showResultsPopup = (keywordsWithScores, summarySentences) => {
   Swal.fire({
@@ -303,7 +337,7 @@ const generateSummary = () => {
     <div className="flex flex-col items-center min-h-screen px-6 py-10 mt-20 ">
       <div className="bg-white shadow-md px-1 py-2 rounded-2xl w-full max-w-5xl ngek">
         <h2 className="text-lg font-medium text-white text-center">
-          Briefos - Fast, accurate text summarization and search using TD-IDF and Hybrid Summarization
+          Briefos - Text Summarization Using TF-IDF and Aho-Corasick Algorithm
         </h2>
       </div>
 
@@ -379,7 +413,7 @@ const generateSummary = () => {
               {summary.length} characters | {Math.ceil(summary.length / 250)} min read
             </div>
 
-            <div className="flex justify-end mt-2">
+            <div className="flex justify-end mt-2 space-x-2">
               <button 
                 id="copy-button"
                 className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white rounded-sm cursor-pointer"
@@ -391,6 +425,45 @@ const generateSummary = () => {
               >
                 Copy 
               </button>
+              <button
+                id="close-button"
+                className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white rounded-sm cursor-pointer"
+                onClick={() => {
+                  if (keywordsWithScores && summarySentences) {
+                    showResultsPopup(keywordsWithScores, summarySentences);
+                  } else {
+                    Swal.fire('Info', 'Please generate a summary first', 'info');
+                  }
+                }}
+                disabled={!summary}
+              >
+              Show Results
+              </button>
+              <button
+                id="heatmap-button"
+                className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white rounded-sm cursor-pointer"
+                onClick={() => {    
+                  setShowHeatmap(true)
+                }}
+              >Check HeatMap
+              
+              </button>
+              {showHeatmap && (
+              <div className="fixed inset-0 bg-opacity-40 z-50 flex justify-center items-center">
+                <div className="relative bg-purple-400 rounded-lg shadow-lg p-6 max-w-3xl w-full">
+                  <button
+                    onClick={() => setShowHeatmap(false)}
+                    className="absolute top-2 right-3 text-white hover:text-black text-lg cursor-pointer"
+                  >
+                    ✖
+                  </button>
+
+                  <TfidfHeatmap keywordsWithScores={keywordsWithScores} />
+                </div>
+              </div>
+            )}
+
+             
             </div>
           </div>
         </div>
