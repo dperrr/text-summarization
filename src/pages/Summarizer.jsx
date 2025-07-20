@@ -315,23 +315,51 @@ const generateSummary = () => {
   };
 
   const handleFileUpload = async (event) => {
-    const file = event.target.files[0];
-    if (file && file.type === 'application/pdf') {
-      setPdfFile(file);
-      try {
-        setLoading(true);
-        const extractedText = await pdfToText(file);
-        setText(extractedText);
-      } catch (error) {
-        console.error('Error extracting text from PDF:', error);
-        Swal.fire('Error', 'Failed to extract text from PDF. Please try again.', 'error');
-      } finally {
-        setLoading(false);
+  const file = event.target.files[0];
+
+  if (file && file.type === 'application/pdf') {
+    setPdfFile(file);
+
+    try {
+      setLoading(true);
+
+      const extractedText = await pdfToText(file);
+      const wordCount = extractedText.trim().split(/\s+/).length;
+
+      setText(extractedText); 
+
+      if (wordCount < 500) {
+        Swal.fire(
+          'Small Document',
+          `This document has ${wordCount} words. The summary might be too short or vague.`,
+          'info'
+        );
+      } else if (wordCount > 5000) {
+        Swal.fire(
+          'Large Document',
+          `This document has ${wordCount} words. Summarization may take longer or lose detail.`,
+          'warning'
+        );
+      } else {
+        Swal.fire(
+          'Uploaded Successfully',
+          `This document has ${wordCount} words. Ready to summarize!`,
+          'success'
+        );
       }
-    } else {
-      Swal.fire('Error', 'Please upload a valid PDF file.', 'error');
+
+    } catch (error) {
+      console.error('Error extracting text from PDF:', error);
+      Swal.fire('Error', 'Failed to extract text from PDF. Please try again.', 'error');
+    } finally {
+      setLoading(false);
     }
-  };
+
+  } else {
+    Swal.fire('Error', 'Please upload a valid PDF file.', 'error');
+  }
+};
+
 
   return (
     <div className="flex flex-col items-center min-h-screen px-6 py-10 mt-20 ">
@@ -354,8 +382,17 @@ const generateSummary = () => {
             />
           </div>
 
-          <div className="text-gray-500 text-sm mt-1">
-            {text.length} characters | {Math.ceil(text.length / 250)} min read
+          <div className='flex space-x-2 mt-1'>
+            <div className="text-gray-500 text-sm">
+              {text.length} characters | {Math.ceil(text.length / 250)} min read
+            </div>
+            <div>
+              {text && (
+                <p className="text-sm text-gray-600">
+                  📄 Word Count: {text.trim().split(/\s+/).length}
+                </p>
+              )}
+            </div>
           </div>
 
           <div className="flex justify-end space-x-2 mt-3">
@@ -376,6 +413,7 @@ const generateSummary = () => {
             >
               {loading ? <ClipLoader color="#fff" size={20} /> : <span className='flex'><Sparkle className='mr-2' size={20} />Run</span>}
             </button>
+            
             <button
               id="clear-button"
               className="py-2 px-5 border-2 border-purple-500 text-purple-500 transition hover:shadow-lg shadow-purple-800 rounded-sm cursor-pointer"
