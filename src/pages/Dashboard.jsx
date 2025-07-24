@@ -36,10 +36,7 @@ function Dashboard() {
                 <div className="mt-6">
                     <h2 className="text-xl font-semibold mb-3">Quick Access to Key Features</h2>
                     <div className="flex flex-wrap justify-center gap-4">
-                        <Link className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2 cursor-pointer"
-                            to={"/search"}>
-                            Search <Search className="ml-2" />
-                        </Link>
+                        
                         <Link className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg flex items-center space-x-2 cursor-pointer"
                             to={"/summarizer"}>
                             Summarizer <FileText className="ml-2" />
