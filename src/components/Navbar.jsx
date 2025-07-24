@@ -11,7 +11,6 @@ function Navbar() {
         <nav className="flex space-x-6">
           <NavbarLink to="/" icon={<Home />} label="Dashboard" location={location} />
           <NavbarLink to="/summarizer" icon={<FileText />} label="Summarizer" location={location} />
-          <NavbarLink to="/search" icon={<Search />} label="Search" location={location} />
           <NavbarLink to="/documentation" icon={<Book />} label="Documentation" location={location} />
           <NavbarLink to="/about" icon={<Info />} label="About Us" location={location} />
         </nav>
