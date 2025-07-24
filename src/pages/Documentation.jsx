@@ -19,11 +19,10 @@ export default function Documentation() {
 
   return (
     <div className="relative flex flex-col md:flex-row min-h-screen text-gray-800 font-sans overflow-x-hidden">
-      {/* Decorative Blurs */}
+
       <div className="absolute w-72 h-72 bg-purple-500 opacity-30 rounded-full blur-3xl top-[-80px] left-[-80px] z-0"></div>
       <div className="absolute w-96 h-96 bg-purple-400 opacity-20 rounded-full blur-3xl bottom-[10%] right-[-100px] z-0"></div>
 
-      {/* Sidebar Navigation */}
       <aside className="z-10 md:w-1/4 bg-white/80 backdrop-blur shadow-lg p-6 sticky top-0 h-screen overflow-y-auto border-r border-gray-200">
         <h2 className="text-2xl font-bold mb-6 text-purple-600">📘 Docs Menu</h2>
         <nav className="space-y-3">
@@ -91,7 +90,7 @@ function getSectionContent(title) {
     case "Features":
       return (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {["Keyword filtering", "Hybrid summarization", "Paste or upload text", "Downloadable summary"].map(f => (
+          {["Keyword filtering", "Hybrid summarization", "Paste or upload text"].map(f => (
             <div className="bg-white p-4 rounded-xl shadow hover:shadow-md transition border border-purple-100">
               {f}
             </div>
@@ -143,7 +142,6 @@ function getSectionContent(title) {
           <li>TF-IDF – Sentence scoring</li>
           <li>BART – Abstractive summarization</li>
           <li>TailwindCSS + React – UI/UX</li>
-          <li>Python (Flask/FastAPI) – Backend</li>
         </ul>
       );
 
@@ -151,8 +149,8 @@ function getSectionContent(title) {
       return (
         <p>
           Got feedback or a bug report? Reach us at{" "}
-          <a href="mailto:you@example.com" className="text-purple-600 underline">
-            you@example.com
+          <a href="jasperdannn@gmail.com" className="text-purple-600 underline">
+            jasperdannn@gmail.com
           </a>.
         </p>
       );
