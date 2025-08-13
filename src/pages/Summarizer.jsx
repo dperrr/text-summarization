@@ -140,28 +140,40 @@ function Summarizer() {
       return results;
     }
   }
+  //AI BUT SUBJECT TO CHANGE SO WE CAN ADJUST IN THE LARGE DOCUMENTS
+//  const summarizeText = async () => {
+//     const apiKey = 'myapi'; 
+//     const model = 'facebook/bart-large-cnn'; 
 
-const summarizeText = async (selectedText) => {
-  const apiKey = ''; 
-  
-  try {
-    const response = await axios.post(
-      `https://api-inference.huggingface.co/models/facebook/bart-large-cnn`,
-      { inputs: selectedText },
-      {
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+//     if (!text) {
+//       Swal.fire('Warning', 'Please extract text from a PDF before summarizing.', 'warning');
+//       return;
+//     }
 
-    return response.data[0].summary_text;
-  } catch (error) {
-    console.error('Error summarizing text:', error);
-    throw error;
-  }
-};
+//     setLoading(true); 
+
+//     try {
+//         const response = await axios.post(
+//             `https://api-inference.huggingface.co/models/facebook/bart-large-cnn`,
+//             { inputs: text },
+//             {
+//               headers: {
+//                 Authorization: `Bearer ${apiKey}`,
+//                 'Content-Type': 'application/json',
+//               },
+//             }
+//       );
+
+//       const summaryText = response.data[0].summary_text;
+//       setSummary(summaryText);
+//       Swal.fire('Success', 'Text summarized successfully!', 'success');
+//     } catch (error) {
+//       console.error('Error summarizing text:', error);
+//       Swal.fire('Error', 'Failed to summarize text. Please try again.', 'error');
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
 
 const generateSummary = async () => {
   setLoading(true);
@@ -210,31 +222,46 @@ const generateSummary = async () => {
       };
     });
 
-    // IMPROVED: Select more sentences for longer documents
+    // Calculate how many sentences to select based on word count
+    const totalWords = text.split(' ').length;
     const totalSentences = sentences.length;
     let numSentencesToSelect;
     
-    if (totalSentences < 20) {
-      numSentencesToSelect = Math.max(3, Math.floor(totalSentences * 0.6)); // PUTA I-ADJUST NATIN 60% for short docs
-    } else if (totalSentences < 50) {
-      numSentencesToSelect = Math.floor(totalSentences * 0.4); // PUTA I-ADJUST NATIN 40% for medium docs
+    // ADJUTER FOR NUMBER OF WORDS
+    if (totalWords < 150) {
+      numSentencesToSelect = Math.max(2, Math.floor(totalSentences * 0.4));
+    } else if (totalWords < 300) {
+      numSentencesToSelect = Math.max(3, Math.floor(totalSentences * 0.45));
+    } else if (totalWords < 500) {
+      numSentencesToSelect = Math.max(4, Math.floor(totalSentences * 0.5));
+    } else if (totalWords < 1000) {
+      numSentencesToSelect = Math.floor(totalSentences * 0.4);
+    } else if (totalWords < 2000) {
+      numSentencesToSelect = Math.floor(totalSentences * 0.35);
+    } else if (totalWords < 5000) {
+      numSentencesToSelect = Math.floor(totalSentences * 0.3);
     } else {
-      numSentencesToSelect = Math.floor(totalSentences * 0.3); // PUTA I-ADJUST NATIN 30% for long docs
+      numSentencesToSelect = Math.floor(totalSentences * 0.25);
     }
+    
+    // ADJUST THE SELECTED WORDS BASED ON THE WORD COUNT
+    if (totalWords < 200) {
+      numSentencesToSelect = Math.min(numSentencesToSelect, 3);
+    }
+    
+    // Ensure minimum of 2 sentences for any text
+    numSentencesToSelect = Math.max(numSentencesToSelect, 2);
 
-    // Sort and select top N
+    // Sort and select top N sentences
     const topSentences = scoredSentences
       .sort((a, b) => (b.score * b.positionWeight) - (a.score * a.positionWeight))
       .slice(0, numSentencesToSelect);
 
-    // De-duplicate near-sentences
-    const seen = new Set();
-    const dedupedSentences = topSentences.filter(s => {
-      const key = s.text.toLowerCase().slice(0, 40);
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
+    // Skip deduplication for now
+    const dedupedSentences = topSentences;
+    
+    console.log(`Total sentences: ${totalSentences}, Will select: ${numSentencesToSelect}`);
+    console.log(`Selected ${dedupedSentences.length} sentences without AI processing`);
 
     // Restore original order
     const finalSentences = dedupedSentences.sort(
@@ -243,20 +270,18 @@ const generateSummary = async () => {
 
     setSummarySentences(finalSentences);
 
-    // Prepare text for API join the selected sentences
-    const selectedText = finalSentences
+    // Create the summary from selected sentences (SEMI FINAL SELECTION STILL WAITING FOR THE MODEL)
+    const extractiveSummary = finalSentences
       .map(s => s.text.trim())
       .join(' ');
 
+    setSummary(extractiveSummary);
+
     console.log(`Original: ${text.split(' ').length} words`);
-    console.log(`Selected: ${selectedText.split(' ').length} words`);
+    console.log(`Final summary: ${extractiveSummary.split(' ').length} words`);
     console.log(`Selected sentences: ${finalSentences.length}`);
 
-    // PASSS TO BART THE EXTRACTIVE SUMMARIZATION
-    const aiSummary = await summarizeText(selectedText);
-    setSummary(aiSummary);
-
-    Swal.fire('Success', 'Text summarized successfully!', 'success');
+    Swal.fire('Success', 'Text summarized successfully using TF-IDF + Aho-Corasick!', 'success');
     showResultsPopup(keywordsWithScores, finalSentences);
   } catch (error) {
     console.error("Summarization error:", error);
@@ -265,6 +290,7 @@ const generateSummary = async () => {
     setLoading(false);
   }
 };
+
 
   const showResultsPopup = (keywordsWithScores, summarySentences) => {
   Swal.fire({
