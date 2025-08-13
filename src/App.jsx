@@ -5,6 +5,7 @@ import Summarizer from './pages/Summarizer.jsx';
 import Documentation from './pages/Documentation.jsx';
 import AboutUs from "./pages/AboutUs.jsx"
 import Navbar from './components/Navbar.jsx';
+import ResultAnalysis from './pages/ResultAnalysis.jsx';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/summarizer" element={<Summarizer />} />
         <Route path="/documentation" element={<Documentation />} />
         <Route path="/about" element={<AboutUs />} />
+        <Route path="/result-analysis" element={<ResultAnalysis />} />
       </Routes>
     </Router>
   );
