@@ -141,7 +141,29 @@ function Summarizer() {
     }
   }
 
-const generateSummary = () => {
+const summarizeText = async (selectedText) => {
+  const apiKey = ''; 
+  
+  try {
+    const response = await axios.post(
+      `https://api-inference.huggingface.co/models/facebook/bart-large-cnn`,
+      { inputs: selectedText },
+      {
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    return response.data[0].summary_text;
+  } catch (error) {
+    console.error('Error summarizing text:', error);
+    throw error;
+  }
+};
+
+const generateSummary = async () => {
   setLoading(true);
 
   try {
@@ -188,10 +210,22 @@ const generateSummary = () => {
       };
     });
 
+    // IMPROVED: Select more sentences for longer documents
+    const totalSentences = sentences.length;
+    let numSentencesToSelect;
+    
+    if (totalSentences < 20) {
+      numSentencesToSelect = Math.max(3, Math.floor(totalSentences * 0.6)); // PUTA I-ADJUST NATIN 60% for short docs
+    } else if (totalSentences < 50) {
+      numSentencesToSelect = Math.floor(totalSentences * 0.4); // PUTA I-ADJUST NATIN 40% for medium docs
+    } else {
+      numSentencesToSelect = Math.floor(totalSentences * 0.3); // PUTA I-ADJUST NATIN 30% for long docs
+    }
+
     // Sort and select top N
     const topSentences = scoredSentences
       .sort((a, b) => (b.score * b.positionWeight) - (a.score * a.positionWeight))
-      .slice(0, Math.max(3, Math.floor(sentences.length / 3)));
+      .slice(0, numSentencesToSelect);
 
     // De-duplicate near-sentences
     const seen = new Set();
@@ -209,13 +243,20 @@ const generateSummary = () => {
 
     setSummarySentences(finalSentences);
 
-    // Strip punctuation, re-append cleanly
-    const summaryText = finalSentences
-      .map(s => s.text.trim().replace(/[.!?]+$/, '') + '.')
+    // Prepare text for API join the selected sentences
+    const selectedText = finalSentences
+      .map(s => s.text.trim())
       .join(' ');
 
-    setSummary(summaryText);
+    console.log(`Original: ${text.split(' ').length} words`);
+    console.log(`Selected: ${selectedText.split(' ').length} words`);
+    console.log(`Selected sentences: ${finalSentences.length}`);
 
+    // PASSS TO BART THE EXTRACTIVE SUMMARIZATION
+    const aiSummary = await summarizeText(selectedText);
+    setSummary(aiSummary);
+
+    Swal.fire('Success', 'Text summarized successfully!', 'success');
     showResultsPopup(keywordsWithScores, finalSentences);
   } catch (error) {
     console.error("Summarization error:", error);
@@ -224,7 +265,6 @@ const generateSummary = () => {
     setLoading(false);
   }
 };
-
 
   const showResultsPopup = (keywordsWithScores, summarySentences) => {
   Swal.fire({
