@@ -7,6 +7,7 @@ import "driver.js/dist/driver.css";
 import { Sparkle } from 'lucide-react';
 import ClipLoader from "react-spinners/ClipLoader";
 import TfidfHeatmap from './TfidfHeatmap';
+import { STOPWORDS } from "../Utils/stopwords.jsx"; 
 
 
 function Summarizer() {
@@ -23,48 +24,61 @@ function Summarizer() {
     startDriver();
   }, []);
 
-  // TF-IDF Algorithm
-  const calculateTFIDF = (documents) => {
-    const tfs = documents.map(doc => {
-      const words = doc.toLowerCase().split(/\s+/);
-      const totalWords = words.length;
-      const tf = {};
-      
-      words.forEach(word => {
-        tf[word] = (tf[word] || 0) + 1;
-      });
-      
-      Object.keys(tf).forEach(word => {
-        tf[word] = tf[word] / totalWords;
-      });
-      
-      return tf;
+// TF-IDF Algorithm
+const calculateTFIDF = (documents) => {
+  // Calculate Term Frequency (TF)
+  const tfs = documents.map(doc => {
+    const words = doc
+      .toLowerCase()
+      .split(/\s+/)
+      .filter(w => !STOPWORDS.has(w));
+
+    const totalWords = words.length;
+    const tf = {};
+
+    words.forEach(word => {
+      tf[word] = (tf[word] || 0) + 1;
     });
 
-    const idf = {};
-    const totalDocs = documents.length;
-    
-    documents.forEach(doc => {
-      const words = new Set(doc.toLowerCase().split(/\s+/));
-      words.forEach(word => {
-        idf[word] = (idf[word] || 0) + 1;
-      });
-    });
-    
-    Object.keys(idf).forEach(word => {
-      idf[word] = Math.log(totalDocs / idf[word]);
+    Object.keys(tf).forEach(word => {
+      tf[word] = tf[word] / totalWords;
     });
 
-    const tfidf = tfs.map(tf => {
-      const scores = {};
-      Object.keys(tf).forEach(word => {
-        scores[word] = tf[word] * idf[word];
-      });
-      return scores;
-    });
+    return tf;
+  });
 
-    return tfidf;
-  };
+  // Calculate Inverse Document Frequency (IDF)
+  const idf = {};
+  const totalDocs = documents.length;
+
+  documents.forEach(doc => {
+    const words = new Set(
+      doc
+        .toLowerCase()
+        .split(/\s+/)
+        .filter(w => !STOPWORDS.has(w))
+    );
+
+    words.forEach(word => {
+      idf[word] = (idf[word] || 0) + 1;
+    });
+  });
+
+  Object.keys(idf).forEach(word => {
+    idf[word] = Math.log(totalDocs / idf[word]);
+  });
+
+  // Combine TF and IDF into TF-IDF
+  const tfidf = tfs.map(tf => {
+    const scores = {};
+    Object.keys(tf).forEach(word => {
+      scores[word] = tf[word] * idf[word];
+    });
+    return scores;
+  });
+
+  return tfidf;
+};
 
   // Aho-Corasick Algorithm
   class AhoCorasick {
@@ -376,23 +390,24 @@ const generateSummary = async () => {
 
       setText(extractedText); 
 
-      if (wordCount < 500) {
+      // Input Size Constraint
+      if (wordCount <= 700) {
         Swal.fire(
           'Small Document',
-          `This document has ${wordCount} words. The summary might be too short or vague.`,
+          `This is a small document and has a ${wordCount} words. The summary might be too short or vague.`,
           'info'
         );
-      } else if (wordCount > 5000) {
+      } else if (wordCount <= 2500) {
+        Swal.fire(
+          'Medium Document',
+          `This is a medium document and has a ${wordCount} words. Summarization may take longer or lose detail.`,
+          'info'
+        );
+      } else if (wordCount > 4500) {
         Swal.fire(
           'Large Document',
-          `This document has ${wordCount} words. Summarization may take longer or lose detail.`,
-          'warning'
-        );
-      } else {
-        Swal.fire(
-          'Uploaded Successfully',
-          `This document has ${wordCount} words. Ready to summarize!`,
-          'success'
+          `This is a large document and has a ${wordCount} words. Ready to summarize!`,
+          'info'
         );
       }
 
