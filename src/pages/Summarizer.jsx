@@ -140,40 +140,6 @@ function Summarizer() {
       return results;
     }
   }
-  //AI BUT SUBJECT TO CHANGE SO WE CAN ADJUST IN THE LARGE DOCUMENTS
-//  const summarizeText = async () => {
-//     const apiKey = 'myapi'; 
-//     const model = 'facebook/bart-large-cnn'; 
-
-//     if (!text) {
-//       Swal.fire('Warning', 'Please extract text from a PDF before summarizing.', 'warning');
-//       return;
-//     }
-
-//     setLoading(true); 
-
-//     try {
-//         const response = await axios.post(
-//             `https://api-inference.huggingface.co/models/facebook/bart-large-cnn`,
-//             { inputs: text },
-//             {
-//               headers: {
-//                 Authorization: `Bearer ${apiKey}`,
-//                 'Content-Type': 'application/json',
-//               },
-//             }
-//       );
-
-//       const summaryText = response.data[0].summary_text;
-//       setSummary(summaryText);
-//       Swal.fire('Success', 'Text summarized successfully!', 'success');
-//     } catch (error) {
-//       console.error('Error summarizing text:', error);
-//       Swal.fire('Error', 'Failed to summarize text. Please try again.', 'error');
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
 
 const generateSummary = async () => {
   setLoading(true);
@@ -374,6 +340,22 @@ const generateSummary = async () => {
             description: 'Click here to copy the summary to your clipboard.',
             position: 'bottom'
           }
+        },
+        {
+          element: '#result-button',
+          popover: {
+            title: 'Step 7: Show Result',
+            description: 'Click here to check the pick keywords and sentences by TF-IDF and Aho-Corasick.',
+            position: 'bottom'
+          }
+        },
+        {
+          element: '#heatmap-button',
+          popover: {
+            title: 'Step 8: Show Heatmap',
+            description: 'Click here to check the pick keyword scores in graph.',
+            position: 'bottom'
+          }
         }
       ]
     });
@@ -530,7 +512,7 @@ const generateSummary = async () => {
                 Copy 
               </button>
               <button
-                id="close-button"
+                id="result-button"
                 className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white rounded-sm cursor-pointer"
                 onClick={() => {
                   if (keywordsWithScores && summarySentences) {
