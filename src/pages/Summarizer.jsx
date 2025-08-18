@@ -7,10 +7,12 @@ import "driver.js/dist/driver.css";
 import { Sparkle } from 'lucide-react';
 import ClipLoader from "react-spinners/ClipLoader";
 import TfidfHeatmap from './TfidfHeatmap';
-import { STOPWORDS } from "../Utils/stopwords.jsx"; 
+import { STOPWORDS } from "../Utils/stopwords.jsx";
+import { askGemini } from "../Utils/api.jsx"
 
 
 function Summarizer() {
+  const [extractiveSummary, setExtractiveSummary] = useState('');
   const [text, setText] = useState('');
   const [summary, setSummary] = useState('');
   const [pdfFile, setPdfFile] = useState(null);
@@ -207,7 +209,7 @@ const generateSummary = async () => {
     const totalSentences = sentences.length;
     let numSentencesToSelect;
     
-    // ADJUTER FOR NUMBER OF WORDS
+    // ADJUSTER FOR NUMBER OF WORDS
     if (totalWords < 150) {
       numSentencesToSelect = Math.max(2, Math.floor(totalSentences * 0.4));
     } else if (totalWords < 300) {
@@ -250,19 +252,42 @@ const generateSummary = async () => {
 
     setSummarySentences(finalSentences);
 
-    // Create the summary from selected sentences (SEMI FINAL SELECTION STILL WAITING FOR THE MODEL)
+    // Create the extractive summary from selected sentences
     const extractiveSummary = finalSentences
       .map(s => s.text.trim())
       .join(' ');
 
-    setSummary(extractiveSummary);
-
     console.log(`Original: ${text.split(' ').length} words`);
-    console.log(`Final summary: ${extractiveSummary.split(' ').length} words`);
+    console.log(`Extractive summary: ${extractiveSummary.split(' ').length} words`);
     console.log(`Selected sentences: ${finalSentences.length}`);
 
-    Swal.fire('Success', 'Text summarized successfully using TF-IDF + Aho-Corasick!', 'success');
+    try {
+      // Use Gemini to refine the extractive summary
+      console.log('Refining summary with Gemini AI...');
+      const refinedSummary = await askGemini(extractiveSummary);
+      
+      // Set the refined summary as the final summary
+      setSummary(refinedSummary);
+      
+      console.log(`Final refined summary: ${refinedSummary.split(' ').length} words`);
+      
+      Swal.fire('Success', 'Text summarized successfully using TF-IDF + Aho-Corasick + Gemini AI!', 'success');
+    } catch (geminiError) {
+      console.error("Gemini API error:", geminiError);
+      console.log("Falling back to extractive summary...");
+      
+      // Fallback to extractive summary if Gemini fails
+      setSummary(extractiveSummary);
+      
+      Swal.fire({
+        title: 'Partial Success',
+        text: 'Text summarized using TF-IDF + Aho-Corasick. AI refinement failed, showing extractive summary.',
+        icon: 'warning'
+      });
+    }
+
     showResultsPopup(keywordsWithScores, finalSentences);
+    
   } catch (error) {
     console.error("Summarization error:", error);
     Swal.fire('Error', 'Failed to generate summary. Please try again.', 'error');
