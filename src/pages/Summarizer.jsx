@@ -7,9 +7,12 @@ import "driver.js/dist/driver.css";
 import { Sparkle } from 'lucide-react';
 import ClipLoader from "react-spinners/ClipLoader";
 import TfidfHeatmap from './TfidfHeatmap';
+import { STOPWORDS } from "../Utils/stopwords.jsx";
+import { askGemini } from "../Utils/api.jsx"
 
 
 function Summarizer() {
+  const [extractiveSummary, setExtractiveSummary] = useState('');
   const [text, setText] = useState('');
   const [summary, setSummary] = useState('');
   const [pdfFile, setPdfFile] = useState(null);
@@ -23,48 +26,61 @@ function Summarizer() {
     startDriver();
   }, []);
 
-  // TF-IDF Algorithm
-  const calculateTFIDF = (documents) => {
-    const tfs = documents.map(doc => {
-      const words = doc.toLowerCase().split(/\s+/);
-      const totalWords = words.length;
-      const tf = {};
-      
-      words.forEach(word => {
-        tf[word] = (tf[word] || 0) + 1;
-      });
-      
-      Object.keys(tf).forEach(word => {
-        tf[word] = tf[word] / totalWords;
-      });
-      
-      return tf;
+// TF-IDF Algorithm
+const calculateTFIDF = (documents) => {
+  // Calculate Term Frequency (TF)
+  const tfs = documents.map(doc => {
+    const words = doc
+      .toLowerCase()
+      .split(/\s+/)
+      .filter(w => !STOPWORDS.has(w));
+
+    const totalWords = words.length;
+    const tf = {};
+
+    words.forEach(word => {
+      tf[word] = (tf[word] || 0) + 1;
     });
 
-    const idf = {};
-    const totalDocs = documents.length;
-    
-    documents.forEach(doc => {
-      const words = new Set(doc.toLowerCase().split(/\s+/));
-      words.forEach(word => {
-        idf[word] = (idf[word] || 0) + 1;
-      });
-    });
-    
-    Object.keys(idf).forEach(word => {
-      idf[word] = Math.log(totalDocs / idf[word]);
+    Object.keys(tf).forEach(word => {
+      tf[word] = tf[word] / totalWords;
     });
 
-    const tfidf = tfs.map(tf => {
-      const scores = {};
-      Object.keys(tf).forEach(word => {
-        scores[word] = tf[word] * idf[word];
-      });
-      return scores;
-    });
+    return tf;
+  });
 
-    return tfidf;
-  };
+  // Calculate Inverse Document Frequency (IDF)
+  const idf = {};
+  const totalDocs = documents.length;
+
+  documents.forEach(doc => {
+    const words = new Set(
+      doc
+        .toLowerCase()
+        .split(/\s+/)
+        .filter(w => !STOPWORDS.has(w))
+    );
+
+    words.forEach(word => {
+      idf[word] = (idf[word] || 0) + 1;
+    });
+  });
+
+  Object.keys(idf).forEach(word => {
+    idf[word] = Math.log(totalDocs / idf[word]);
+  });
+
+  // Combine TF and IDF into TF-IDF
+  const tfidf = tfs.map(tf => {
+    const scores = {};
+    Object.keys(tf).forEach(word => {
+      scores[word] = tf[word] * idf[word];
+    });
+    return scores;
+  });
+
+  return tfidf;
+};
 
   // Aho-Corasick Algorithm
   class AhoCorasick {
@@ -140,40 +156,6 @@ function Summarizer() {
       return results;
     }
   }
-  //AI BUT SUBJECT TO CHANGE SO WE CAN ADJUST IN THE LARGE DOCUMENTS
-//  const summarizeText = async () => {
-//     const apiKey = 'myapi'; 
-//     const model = 'facebook/bart-large-cnn'; 
-
-//     if (!text) {
-//       Swal.fire('Warning', 'Please extract text from a PDF before summarizing.', 'warning');
-//       return;
-//     }
-
-//     setLoading(true); 
-
-//     try {
-//         const response = await axios.post(
-//             `https://api-inference.huggingface.co/models/facebook/bart-large-cnn`,
-//             { inputs: text },
-//             {
-//               headers: {
-//                 Authorization: `Bearer ${apiKey}`,
-//                 'Content-Type': 'application/json',
-//               },
-//             }
-//       );
-
-//       const summaryText = response.data[0].summary_text;
-//       setSummary(summaryText);
-//       Swal.fire('Success', 'Text summarized successfully!', 'success');
-//     } catch (error) {
-//       console.error('Error summarizing text:', error);
-//       Swal.fire('Error', 'Failed to summarize text. Please try again.', 'error');
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
 
 const generateSummary = async () => {
   setLoading(true);
@@ -227,7 +209,7 @@ const generateSummary = async () => {
     const totalSentences = sentences.length;
     let numSentencesToSelect;
     
-    // ADJUTER FOR NUMBER OF WORDS
+    // ADJUSTER FOR NUMBER OF WORDS
     if (totalWords < 150) {
       numSentencesToSelect = Math.max(2, Math.floor(totalSentences * 0.4));
     } else if (totalWords < 300) {
@@ -270,19 +252,42 @@ const generateSummary = async () => {
 
     setSummarySentences(finalSentences);
 
-    // Create the summary from selected sentences (SEMI FINAL SELECTION STILL WAITING FOR THE MODEL)
+    // Create the extractive summary from selected sentences
     const extractiveSummary = finalSentences
       .map(s => s.text.trim())
       .join(' ');
 
-    setSummary(extractiveSummary);
-
     console.log(`Original: ${text.split(' ').length} words`);
-    console.log(`Final summary: ${extractiveSummary.split(' ').length} words`);
+    console.log(`Extractive summary: ${extractiveSummary.split(' ').length} words`);
     console.log(`Selected sentences: ${finalSentences.length}`);
 
-    Swal.fire('Success', 'Text summarized successfully using TF-IDF + Aho-Corasick!', 'success');
+    try {
+      // Use Gemini to refine the extractive summary
+      console.log('Refining summary with Gemini AI...');
+      const refinedSummary = await askGemini(extractiveSummary);
+      
+      // Set the refined summary as the final summary
+      setSummary(refinedSummary);
+      
+      console.log(`Final refined summary: ${refinedSummary.split(' ').length} words`);
+      
+      Swal.fire('Success', 'Text summarized successfully using TF-IDF + Aho-Corasick + Gemini AI!', 'success');
+    } catch (geminiError) {
+      console.error("Gemini API error:", geminiError);
+      console.log("Falling back to extractive summary...");
+      
+      // Fallback to extractive summary if Gemini fails
+      setSummary(extractiveSummary);
+      
+      Swal.fire({
+        title: 'Partial Success',
+        text: 'Text summarized using TF-IDF + Aho-Corasick. AI refinement failed, showing extractive summary.',
+        icon: 'warning'
+      });
+    }
+
     showResultsPopup(keywordsWithScores, finalSentences);
+    
   } catch (error) {
     console.error("Summarization error:", error);
     Swal.fire('Error', 'Failed to generate summary. Please try again.', 'error');
@@ -374,6 +379,22 @@ const generateSummary = async () => {
             description: 'Click here to copy the summary to your clipboard.',
             position: 'bottom'
           }
+        },
+        {
+          element: '#result-button',
+          popover: {
+            title: 'Step 7: Show Result',
+            description: 'Click here to check the pick keywords and sentences by TF-IDF and Aho-Corasick.',
+            position: 'bottom'
+          }
+        },
+        {
+          element: '#heatmap-button',
+          popover: {
+            title: 'Step 8: Show Heatmap',
+            description: 'Click here to check the pick keyword scores in graph.',
+            position: 'bottom'
+          }
         }
       ]
     });
@@ -394,23 +415,24 @@ const generateSummary = async () => {
 
       setText(extractedText); 
 
-      if (wordCount < 500) {
+      // Input Size Constraint
+      if (wordCount <= 700) {
         Swal.fire(
           'Small Document',
-          `This document has ${wordCount} words. The summary might be too short or vague.`,
+          `This is a small document and has a ${wordCount} words. The summary might be too short or vague.`,
           'info'
         );
-      } else if (wordCount > 5000) {
+      } else if (wordCount <= 2500) {
+        Swal.fire(
+          'Medium Document',
+          `This is a medium document and has a ${wordCount} words. Summarization may take longer or lose detail.`,
+          'info'
+        );
+      } else if (wordCount > 4500) {
         Swal.fire(
           'Large Document',
-          `This document has ${wordCount} words. Summarization may take longer or lose detail.`,
-          'warning'
-        );
-      } else {
-        Swal.fire(
-          'Uploaded Successfully',
-          `This document has ${wordCount} words. Ready to summarize!`,
-          'success'
+          `This is a large document and has a ${wordCount} words. Ready to summarize!`,
+          'info'
         );
       }
 
@@ -530,7 +552,7 @@ const generateSummary = async () => {
                 Copy 
               </button>
               <button
-                id="close-button"
+                id="result-button"
                 className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white rounded-sm cursor-pointer"
                 onClick={() => {
                   if (keywordsWithScores && summarySentences) {
