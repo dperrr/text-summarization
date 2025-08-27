@@ -13,7 +13,7 @@ function Navbar() {
           <NavbarLink to="/summarizer" icon={<FileText />} label="Summarizer" location={location} />
           <NavbarLink to="/documentation" icon={<Book />} label="Documentation" location={location} />
           <NavbarLink to="/about" icon={<Info />} label="About Us" location={location} />
-           <NavbarLink to="/result" icon={<Info />} label="Result-Analysis" location={location} />
+           <NavbarLink to="/overall" icon={<Info />} label="Overall" location={location} />
         </nav>
       </div>
     </div>
