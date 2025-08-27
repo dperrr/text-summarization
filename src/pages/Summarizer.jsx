@@ -9,6 +9,8 @@ import ClipLoader from "react-spinners/ClipLoader";
 import TfidfHeatmap from './TfidfHeatmap';
 import { STOPWORDS } from "../Utils/stopwords.jsx";
 import { askGemini } from "../Utils/api.jsx"
+import Evaluation, { evaluateSummaries } from '../components/evaluation.jsx';
+import fs from 'fs';
 
 
 function Summarizer() {
@@ -21,12 +23,21 @@ function Summarizer() {
   const [keywordsWithScores, setKeywordsWithScores] = useState([]);
   const [summarySentences, setSummarySentences] = useState([]);
   const [showHeatmap, setShowHeatmap] = useState(false);
+ const [metrics, setMetrics] = useState(null);
+const [showEvaluation, setShowEvaluation] = useState(false);
 
   useEffect(() => {
     startDriver();
   }, []);
 
-// TF-IDF Algorithm
+/**
+ * This function implements the TF-IDF algorithm, which measures how important words are within a set of documents. 
+ * It first calculates Term Frequency (TF), showing how often a word appears in a single document relative to its length. 
+ * Next, it calculates Inverse Document Frequency (IDF), which reduces the weight of very common words by comparing how many documents contain the word. 
+ * Finally, it multiplies TF by IDF to produce TF-IDF scores, highlighting words that are frequent in a document but rare across the entire collection, 
+ * making them more meaningful for tasks like keyword extraction or document similarity.
+ */
+
 const calculateTFIDF = (documents) => {
   // Calculate Term Frequency (TF)
   const tfs = documents.map(doc => {
@@ -82,7 +93,14 @@ const calculateTFIDF = (documents) => {
   return tfidf;
 };
 
-  // Aho-Corasick Algorithm
+  /**
+ * This class implements the Aho-Corasick algorithm for multi-pattern string searching. 
+ * It builds a trie structure from given keywords, then augments it with failure links that act like shortcuts, 
+ * so when a mismatch occurs during scanning, the search can jump to the longest valid suffix instead of restarting from the root. 
+ * This makes searching efficient (linear in text length) and also enables detection of overlapping matches, 
+ * meaning multiple keywords can be found in one pass through the text.
+ */
+
   class AhoCorasick {
     constructor(keywords) {
       this.root = this.buildTrie(keywords);
@@ -157,21 +175,39 @@ const calculateTFIDF = (documents) => {
     }
   }
 
+// // helper function to download JSON in browser
+// const downloadJSON = (data, filename = "summary_results.json") => {
+//   const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+//   const url = URL.createObjectURL(blob);
+
+//   const a = document.createElement("a");
+//   a.href = url;
+//   a.download = filename;
+//   a.click();
+
+//   URL.revokeObjectURL(url);
+// };
+
 const generateSummary = async () => {
   setLoading(true);
 
   try {
+    // ---- Preprocessing ----
     const sentences = text
       .split(/(?<=[.!?])\s+(?=[A-Z])/)
-      .map(s => s.trim())
-      .filter(s => s.length > 20); 
+      .map((s) => s.trim())
+      .filter((s) => s.length > 20);
 
+    // ---- TF-IDF Timing ----
+    const startTF = performance.now();
     const tfidfScores = calculateTFIDF(sentences);
+    const endTF = performance.now();
+    const tfidfTime = endTF - startTF;
 
     // Get keywords with scores
     const keywordsWithScores = Object.entries(
       tfidfScores.reduce((acc, score) => {
-        Object.keys(score).forEach(word => {
+        Object.keys(score).forEach((word) => {
           acc[word] = (acc[word] || 0) + score[word];
         });
         return acc;
@@ -179,123 +215,140 @@ const generateSummary = async () => {
     )
       .sort((a, b) => b[1] - a[1])
       .slice(0, 15)
-      .filter(([word]) => word.length > 2); 
+      .filter(([word]) => word.length > 2);
 
     setKeywords(keywordsWithScores.map(([word]) => word));
     setKeywordsWithScores(keywordsWithScores);
 
+    // ---- Aho-Corasick Timing ----
+    const startAC = performance.now();
     const ac = new AhoCorasick(keywordsWithScores.map(([word]) => word));
 
     const scoredSentences = sentences.map((sentence, index) => {
-      const cleanSentence = sentence.toLowerCase().replace(/[^\w\s]/g, ' ');
+      const cleanSentence = sentence.toLowerCase().replace(/[^\w\s]/g, " ");
       const matches = ac.search(cleanSentence);
-      const uniqueMatches = new Set(matches.flatMap(m => m.keywords));
+      const uniqueMatches = new Set(matches.flatMap((m) => m.keywords));
 
-      // Sum actual TF-IDF keyword scores
       const keywordScore = [...uniqueMatches]
-        .map(k => keywordsWithScores.find(([word]) => word === k)?.[1] || 0)
+        .map(
+          (k) => keywordsWithScores.find(([word]) => word === k)?.[1] || 0
+        )
         .reduce((a, b) => a + b, 0);
 
       return {
         text: sentence,
         score: keywordScore,
-        positionWeight: 1 + (1 / (index + 1)),
-        keywords: [...uniqueMatches]
+        positionWeight: 1 + 1 / (index + 1),
+        keywords: [...uniqueMatches],
       };
     });
+    const endAC = performance.now();
+    const ahoTime = endAC - startAC;
 
-    // Calculate how many sentences to select based on word count
-    const totalWords = text.split(' ').length;
+    // ---- Sentence Selection ----
+    const totalWords = text.split(" ").length;
     const totalSentences = sentences.length;
-    let numSentencesToSelect;
-    
-    // ADJUSTER FOR NUMBER OF WORDS
-    if (totalWords < 150) {
-      numSentencesToSelect = Math.max(2, Math.floor(totalSentences * 0.4));
-    } else if (totalWords < 300) {
-      numSentencesToSelect = Math.max(3, Math.floor(totalSentences * 0.45));
-    } else if (totalWords < 500) {
-      numSentencesToSelect = Math.max(4, Math.floor(totalSentences * 0.5));
-    } else if (totalWords < 1000) {
-      numSentencesToSelect = Math.floor(totalSentences * 0.4);
-    } else if (totalWords < 2000) {
-      numSentencesToSelect = Math.floor(totalSentences * 0.35);
-    } else if (totalWords < 5000) {
-      numSentencesToSelect = Math.floor(totalSentences * 0.3);
-    } else {
-      numSentencesToSelect = Math.floor(totalSentences * 0.25);
-    }
-    
-    // ADJUST THE SELECTED WORDS BASED ON THE WORD COUNT
-    if (totalWords < 200) {
-      numSentencesToSelect = Math.min(numSentencesToSelect, 3);
-    }
-    
-    // Ensure minimum of 2 sentences for any text
+    let numSentencesToSelect =
+      totalWords < 500
+        ? Math.max(2, Math.floor(totalSentences * 0.4))
+        : Math.floor(totalSentences * 0.3);
+
     numSentencesToSelect = Math.max(numSentencesToSelect, 2);
 
-    // Sort and select top N sentences
     const topSentences = scoredSentences
-      .sort((a, b) => (b.score * b.positionWeight) - (a.score * a.positionWeight))
+      .sort(
+        (a, b) =>
+          b.score * b.positionWeight - a.score * a.positionWeight
+      )
       .slice(0, numSentencesToSelect);
 
-    // Skip deduplication for now
-    const dedupedSentences = topSentences;
-    
-    console.log(`Total sentences: ${totalSentences}, Will select: ${numSentencesToSelect}`);
-    console.log(`Selected ${dedupedSentences.length} sentences without AI processing`);
-
-    // Restore original order
-    const finalSentences = dedupedSentences.sort(
+    const finalSentences = topSentences.sort(
       (a, b) => sentences.indexOf(a.text) - sentences.indexOf(b.text)
     );
 
     setSummarySentences(finalSentences);
 
-    // Create the extractive summary from selected sentences
-    const extractiveSummary = finalSentences
-      .map(s => s.text.trim())
-      .join(' ');
+    const extractiveSummary = finalSentences.map((s) => s.text.trim()).join(" ");
+    setExtractiveSummary(extractiveSummary);
 
-    console.log(`Original: ${text.split(' ').length} words`);
-    console.log(`Extractive summary: ${extractiveSummary.split(' ').length} words`);
-    console.log(`Selected sentences: ${finalSentences.length}`);
-
+    // ---- Gemini Timing ----
+    const startGem = performance.now();
+    let refinedSummary = "";
     try {
-      // Use Gemini to refine the extractive summary
-      console.log('Refining summary with Gemini AI...');
-      const refinedSummary = await askGemini(extractiveSummary);
-      
-      // Set the refined summary as the final summary
+      refinedSummary = await askGemini(extractiveSummary);
       setSummary(refinedSummary);
-      
-      console.log(`Final refined summary: ${refinedSummary.split(' ').length} words`);
-      
-      Swal.fire('Success', 'Text summarized successfully using TF-IDF + Aho-Corasick + Gemini AI!', 'success');
     } catch (geminiError) {
-      console.error("Gemini API error:", geminiError);
-      console.log("Falling back to extractive summary...");
-      
-      // Fallback to extractive summary if Gemini fails
+      console.error("Gemini failed:", geminiError);
+      refinedSummary = extractiveSummary;
       setSummary(extractiveSummary);
-      
-      Swal.fire({
-        title: 'Partial Success',
-        text: 'Text summarized using TF-IDF + Aho-Corasick. AI refinement failed, showing extractive summary.',
-        icon: 'warning'
-      });
     }
+    const endGem = performance.now();
+    const geminiTime = endGem - startGem;
 
-    showResultsPopup(keywordsWithScores, finalSentences);
-    
+    const results = {
+      reference: text,
+      extractive: extractiveSummary,
+      abstractive: refinedSummary,
+      timings: {
+        tfidf: tfidfTime,
+        aho: ahoTime,
+        gemini: geminiTime,
+      },
+    };
+
+    // ---- Evaluate automatically ----
+    const evaluation = evaluateSummaries(results);
+
+    // ---- Survey Prompt ----
+    Swal.fire({
+      title: "Rate the Summary",
+      html: `
+        <p>Please rate your experience (1 = poor, 5 = excellent):</p>
+        <label>Summarization Quality:</label><br>
+        <input type="range" id="quality" min="1" max="5" value="3"><br><br>
+
+        <label>Readability:</label><br>
+        <input type="range" id="readability" min="1" max="5" value="3"><br><br>
+
+        <label>User Satisfaction:</label><br>
+        <input type="range" id="satisfaction" min="1" max="5" value="3">
+      `,
+      confirmButtonText: "Submit",
+      preConfirm: () => {
+        return {
+          quality: Number(document.getElementById("quality").value),
+          readability: Number(document.getElementById("readability").value),
+          satisfaction: Number(
+            document.getElementById("satisfaction").value
+          ),
+        };
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const surveyData = result.value;
+
+        // merge survey with evaluation
+        const extendedMetrics = {
+          ...evaluation,
+          survey: surveyData,
+        };
+
+        setMetrics(extendedMetrics); 
+
+        Swal.fire(
+          "Thank you!",
+          "Your feedback has been recorded.",
+          "success"
+        );
+      }
+    });
   } catch (error) {
     console.error("Summarization error:", error);
-    Swal.fire('Error', 'Failed to generate summary. Please try again.', 'error');
+    Swal.fire("Error", "Failed to generate summary.", "error");
   } finally {
     setLoading(false);
   }
 };
-
 
   const showResultsPopup = (keywordsWithScores, summarySentences) => {
   Swal.fire({
@@ -574,6 +627,17 @@ const generateSummary = async () => {
               >Check HeatMap
               
               </button>
+              <button
+  className="py-2 px-5 bg-green-500 hover:bg-green-600 text-white rounded-sm cursor-pointer"
+  onClick={() => setShowEvaluation(true)}
+  disabled={!metrics}
+>
+  Check Evaluation
+</button>
+                {showEvaluation && (
+  <Evaluation metrics={metrics} onClose={() => setShowEvaluation(false)} />
+)}
+
               {showHeatmap && (
               <div className="fixed inset-0 bg-opacity-40 z-50 flex justify-center items-center">
                 <div className="relative bg-purple-400 rounded-lg shadow-lg p-6 max-w-3xl w-full">
