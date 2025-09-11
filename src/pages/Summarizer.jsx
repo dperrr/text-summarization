@@ -23,8 +23,10 @@ function Summarizer() {
   const [keywordsWithScores, setKeywordsWithScores] = useState([]);
   const [summarySentences, setSummarySentences] = useState([]);
   const [showHeatmap, setShowHeatmap] = useState(false);
- const [metrics, setMetrics] = useState(null);
-const [showEvaluation, setShowEvaluation] = useState(false);
+  const [metrics, setMetrics] = useState(null);
+  const [showEvaluation, setShowEvaluation] = useState(false);
+  const [showComparison, setShowComparison] = useState(false);
+
 
   useEffect(() => {
     startDriver();
@@ -295,53 +297,6 @@ const generateSummary = async () => {
         gemini: geminiTime,
       },
     };
-
-    // ---- Evaluate automatically ----
-    const evaluation = evaluateSummaries(results);
-
-    // ---- Survey Prompt ----
-    Swal.fire({
-      title: "Rate the Summary",
-      html: `
-        <p>Please rate your experience (1 = poor, 5 = excellent):</p>
-        <label>Summarization Quality:</label><br>
-        <input type="range" id="quality" min="1" max="5" value="3"><br><br>
-
-        <label>Readability:</label><br>
-        <input type="range" id="readability" min="1" max="5" value="3"><br><br>
-
-        <label>User Satisfaction:</label><br>
-        <input type="range" id="satisfaction" min="1" max="5" value="3">
-      `,
-      confirmButtonText: "Submit",
-      preConfirm: () => {
-        return {
-          quality: Number(document.getElementById("quality").value),
-          readability: Number(document.getElementById("readability").value),
-          satisfaction: Number(
-            document.getElementById("satisfaction").value
-          ),
-        };
-      },
-    }).then((result) => {
-      if (result.isConfirmed) {
-        const surveyData = result.value;
-
-        // merge survey with evaluation
-        const extendedMetrics = {
-          ...evaluation,
-          survey: surveyData,
-        };
-
-        setMetrics(extendedMetrics); 
-
-        Swal.fire(
-          "Thank you!",
-          "Your feedback has been recorded.",
-          "success"
-        );
-      }
-    });
   } catch (error) {
     console.error("Summarization error:", error);
     Swal.fire("Error", "Failed to generate summary.", "error");
@@ -349,8 +304,7 @@ const generateSummary = async () => {
     setLoading(false);
   }
 };
-
-  const showResultsPopup = (keywordsWithScores, summarySentences) => {
+const showResultsPopup = (keywordsWithScores, summarySentences) => {
   Swal.fire({
     title: 'Summary Analysis',
     html: `
@@ -380,6 +334,43 @@ const generateSummary = async () => {
     }
   });
 };
+
+const showComparisonPopup = (extractive, abstractive) => {
+  Swal.fire({
+    title: 'Comparison of Summaries',
+    html: `
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+        <!-- Extractive Summary -->
+        <div>
+          <h3 class="font-bold mb-2">Extractive Summary</h3>
+          <textarea
+            class="w-full border rounded-md p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 h-[580px] resize-none overflow-y-auto"
+            readonly
+          >${extractive || 'No extractive summary yet'}</textarea>
+        </div>
+
+        <!-- Abstractive Summary -->
+        <div>
+          <h3 class="font-bold mb-2">Abstractive Summary</h3>
+          <textarea
+            class="w-full border rounded-md p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 h-[580px] resize-none overflow-y-auto"
+            readonly
+          >${abstractive || 'No abstractive summary yet'}</textarea>
+        </div>
+      </div>
+    `,
+    width: '95%',
+    showConfirmButton: true,
+    confirmButtonText: 'Close',
+    customClass: {
+      popup: 'rounded-lg shadow-xl'
+    }
+  });
+};
+
+
+
+
 
   const startDriver = () => {
     const driverObj = driver({
@@ -618,42 +609,21 @@ const generateSummary = async () => {
               >
               Show Results
               </button>
-              <button
-                id="heatmap-button"
-                className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white rounded-sm cursor-pointer"
-                onClick={() => {    
-                  setShowHeatmap(true)
-                }}
-              >Check HeatMap
+             <button
+              className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white rounded-sm cursor-pointer"
+              id="comparison-button"
+              onClick={() => {
+                if (extractiveSummary || summary) {
+                  showComparisonPopup(extractiveSummary, summary);
+                } else {
+                  Swal.fire('Info', 'Please generate summaries first', 'info');
+                }
+              }}
+            >
+              Show Comparison
+            </button>
+
               
-              </button>
-              <button
-  className="py-2 px-5 bg-green-500 hover:bg-green-600 text-white rounded-sm cursor-pointer"
-  onClick={() => setShowEvaluation(true)}
-  disabled={!metrics}
->
-  Check Evaluation
-</button>
-                {showEvaluation && (
-  <Evaluation metrics={metrics} onClose={() => setShowEvaluation(false)} />
-)}
-
-              {showHeatmap && (
-              <div className="fixed inset-0 bg-opacity-40 z-50 flex justify-center items-center">
-                <div className="relative bg-purple-400 rounded-lg shadow-lg p-6 max-w-3xl w-full">
-                  <button
-                    onClick={() => setShowHeatmap(false)}
-                    className="absolute top-2 right-3 text-white hover:text-black text-lg cursor-pointer"
-                  >
-                    ✖
-                  </button>
-
-                  <TfidfHeatmap keywordsWithScores={keywordsWithScores} />
-                </div>
-              </div>
-            )}
-
-             
             </div>
           </div>
         </div>
