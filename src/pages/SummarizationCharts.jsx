@@ -247,7 +247,7 @@ Y-axis: TF-IDF importance score`
       </p>
     </div>
   </div>
-    <details open className="bg-gray-50 rounded-2xl shadow-md p-4 mt-5">
+    <details  className="bg-gray-50 rounded-2xl shadow-md p-4 mt-5">
         <summary className="cursor-pointer text-xl font-bold text-blue-700 mb-4">
           TF-IDF Utilization in Text Summarization
         </summary>
@@ -478,7 +478,7 @@ Y-axis: TF-IDF importance score`
       <p><strong>Interpretation:</strong> Higher = more efficient on longer documents.</p>
     </div>
   </div>
-  <details open className="bg-gray-50 rounded-2xl shadow-md p-4 mt-5">
+  <details  className="bg-gray-50 rounded-2xl shadow-md p-4 mt-5">
         <summary className="cursor-pointer text-xl font-bold text-green-800 mb-4">
           Comparison to existing AI-based text summarization tools in terms of accuracy, efficiency, and scalability
         </summary>
@@ -761,7 +761,7 @@ Y-axis: TF-IDF importance score`
       </ul>
     </div>
   </div>
-        <details open className="bg-gray-50 rounded-2xl shadow-md p-4 mt-5">
+        <details  className="bg-gray-50 rounded-2xl shadow-md p-4 mt-5">
         <summary className="cursor-pointer text-xl font-bold text-yellow-800 mb-4">
           Aho-Corasick algorithm be optimized for multi-keyword search and real-time keyword highlighting in text summarization
         </summary>
@@ -834,6 +834,114 @@ Y-axis: TF-IDF importance score`
 
       </details>
 </div>
+<div className="p-4 bg-indigo-50 border-l-4 border-indigo-400 rounded-lg shadow-sm mb-6 mt-5">
+  <h2 className="text-lg font-semibold text-indigo-700 mb-2">
+    SOP4 – Impact of Hybrid Summarization on Coherence and Readability
+  </h2>
+
+
+  <div className="space-y-3 text-sm text-gray-700">
+    <div>
+      <span className='font-semibold text-indigo-800'>Why Coherence and Readability Matters?</span>
+      <p>This section focuses on evaluating how the integration of extractive and abstractive summarization improves the coherence and readability of generated summaries. Extractive summarization using TF-IDF and Aho-Corasick provides a factual backbone by identifying and selecting the most relevant sentences from the source text. In contrast, abstractive summarization using the Gemini LLM restructures and rephrases this content to produce smoother, more natural language. By combining these complementary techniques, the hybrid system aims to retain essential information while presenting it in a form that is clearer, more organized, and easier to understand. Automated metrics such as ROUGE and BLEU are used to measure coverage, structure, and language quality, while a planned user evaluation will capture readers’ perceptions of clarity, organization, and overall readability. Together, these methods offer a comprehensive assessment of the system’s ability to meet SOP4’s goal of improving the coherence and readability of generated summaries.</p>
+    </div>
+    <div>
+      <span className="font-semibold text-indigo-800">1. ROUGE Scores</span>
+      <p><strong>What they measure:</strong> Content coverage and structural similarity between generated and reference summaries.</p>
+      <p><strong>Why it matters:</strong> Higher scores indicate better capture of key ideas and more coherent sentence structure.</p>
+    </div>
+
+    <div>
+      <span className="font-semibold text-indigo-800">2. BLEU Score</span>
+      <p><strong>What it measures:</strong> Similarity in wording and phrasing between generated and reference summaries.</p>
+      <p><strong>Why it matters:</strong> Higher scores show the summary’s language is closer to natural and readable text.</p>
+    </div>
+
+    <div>
+      <span className="font-semibold text-indigo-800">3. User Evaluation</span>
+      <p><strong>What it measures:</strong> Perceived clarity, organization, and readability from real users.</p>
+      <p><strong>Why it matters:</strong> Complements automated metrics to capture how coherent and understandable the summaries feel to readers.</p>
+    </div>
+  </div>
+   <details className="bg-gray-50 rounded-2xl shadow-md p-4 mt-5">
+        <summary className="cursor-pointer text-xl font-bold text-indigo-800 mb-4">
+          Basic Comparison of Extractive and Abstractive Summarization
+        </summary>
+         {/* Small Documents */}
+        <h2 className="text-2xl font-semibold text-center mb-6">Small Documents</h2>
+
+          <div className="overflow-x-auto mt-6">
+            <table className="min-w-full border border-gray-300 text-sm">
+              <thead className="bg-purple-100 text-purple-900">
+                <tr>
+                  <th className="border px-4 py-2 text-left">Tool / System</th>
+                  <th className="border px-4 py-2 text-left">ROUGE-1</th>
+                  <th className="border px-4 py-2 text-left">ROUGE-2</th>
+                  <th className="border px-4 py-2 text-left">ROUGE-L</th>
+                  <th className="border px-4 py-2 text-left">BLEU</th>
+
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="border px-4 py-2 font-medium">Briefos (Small docs)</td>
+                  <td className="border px-4 py-2">0.6837</td>
+                  <td className="border px-4 py-2">0.4215</td>
+                  <td className="border px-4 py-2">0.6203</td>
+                  <td className="border px-4 py-2">0.2565</td>
+
+                </tr>
+                <tr>
+                  <td className="border px-4 py-2 font-medium">Briefos (Medium docs)</td>
+                  <td className="border px-4 py-2">0.5123</td>
+                  <td className="border px-4 py-2">0.2483</td>
+                  <td className="border px-4 py-2">0.3522</td>
+                  <td className="border px-4 py-2">0.0486</td>
+
+                </tr>
+
+                <tr>
+                  <td className="border px-4 py-2 font-medium">Extractive(Small)</td>
+                  <td className="border px-4 py-2">0.60</td>
+                  <td className="border px-4 py-2">~0.30</td>
+                  <td className="border px-4 py-2">0.55</td>
+                  <td className="border px-4 py-2">~0.30</td>
+
+                </tr>
+                <tr>
+                  <td className="border px-4 py-2 font-medium">Extractive(Medium)</td>
+                  <td className="border px-4 py-2">0.50</td>
+                  <td className="border px-4 py-2">~0.30</td>
+                  <td className="border px-4 py-2">~0.45</td>
+                  <td className="border px-4 py-2">~0.40</td>
+
+                </tr>
+                <tr>
+                  <td className="border px-4 py-2 font-medium">Extractive (Large)</td>
+                  <td className="border px-4 py-2">~0.40</td>
+                  <td className="border px-4 py-2">~0.12</td>
+                  <td className="border px-4 py-2">~0.35</td>
+                  <td className="border px-4 py-2">~0.38</td>
+
+                </tr>
+              </tbody>
+            </table>
+            <h2 className='text-lg font-semibold text-gray-800 mb-2 text-center'>Table 3. Comparison of Extracive and Abstracive Summarization</h2>
+           
+          </div>
+        {/* Evaluation Small */}
+        <div className="mt-8 p-4 bg-green-50 border border-green-200 rounded-xl">
+          <h3 className="text-lg font-semibold text-green-800 mb-2">Overall Evaluation</h3>
+          <p className="text-gray-700 text-sm text-justify">
+            The overall evaluation across small, medium, and large documents indicates that Briefos (abstractive summarization) consistently excels in capturing the meaning, structure, and coherence of source texts, particularly for shorter documents, while the extractive system demonstrates stronger fidelity to the original wording and greater stability as document size increases. These results suggest that the integration of both approaches can deliver a balanced system that enhances readability, coherence, and accuracy of generated summaries across varying text lengths. However, quantitative metrics such as ROUGE and BLEU only measure overlap and structural similarity and may not fully capture user-perceived quality, usability, or relevance of the summaries. To address this, a planned user evaluation will complement the automated metrics by assessing perceived clarity, usefulness, and satisfaction with the generated summaries. Taken together, these findings and the forthcoming user feedback will provide a more holistic validation of the system’s ability to meet its intended goals of improving summarization quality, readability, and user experience.
+          </p>
+        </div>
+      </details>
+</div>
+
+
+
+     
 
       
     </div>
