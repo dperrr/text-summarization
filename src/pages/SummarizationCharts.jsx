@@ -27,19 +27,28 @@ const SummarizationCharts = () => {
       id: 1,
       picture: LargeOneAho,
       title: "Figure 2.7 Time Complexity vs Number of Keywords",
-      interpretation:"Figure 2.7 presents the space requirements of the Standard Aho–Corasick algorithm compared with the optimized version. The vertical axis represents memory units in terms of trie nodes, while the horizontal axis distinguishes between the two approaches. The results show that the Standard AC required approximately 23,556 nodes, whereas the optimized version only required about 1,300 nodes. This corresponds to a reduction of nearly 94%. The reason for this drastic difference is that the Standard AC constructs a trie for the entire vocabulary (906 unique words), while the optimized approach restricts the trie to the top 50 most significant TF-IDF keywords. This demonstrates that optimization substantially improves space efficiency, which is critical for real-time text summarization where memory is often constrained."
+      interpretation:"Figure 2.7 presents the space requirements of the Standard Aho–Corasick algorithm compared with the optimized version. The vertical axis represents memory units in terms of trie nodes, while the horizontal axis distinguishes between the two approaches. The results show that the Standard AC required approximately 23,556 nodes, whereas the optimized version only required about 1,300 nodes. This corresponds to a reduction of nearly 94%. The reason for this drastic difference is that the Standard AC constructs a trie for the entire vocabulary (906 unique words), while the optimized approach restricts the trie to the top 50 most significant TF-IDF keywords. This demonstrates that optimization substantially improves space efficiency, which is critical for real-time text summarization where memory is often constrained.",
+        xaxis: `X-axis: The two versions (Normal vs Improved).`,
+      yaxis: `Y-axis: Memory required to store keywords.`,
+      note: "A shorter bar means faster performance. The improved version finishes searching more quickly."
     },
     {
       id: 2,
       picture: LargeTwoAho,
       title: "Figure 2.8 Time Complexity vs Number of Keywords",
-      interpretation:"Figure 2.8 compares the processing cost of the Standard AC and the optimized version in terms of proxy operations derived from the complexity formula O(n+m+z). The vertical axis represents the estimated number of operations, while the horizontal axis again shows the two approaches. For the large document with 19,420 characters, the Standard AC incurred approximately 20,526 operations, while the optimized AC required about 19,670. This represents a modest improvement of around 4%. The relatively small gain is expected, since the text length (n) dominates the overall complexity and remains constant in both cases. Nonetheless, the optimized approach never slower and slightly improves execution time, which confirms its practicality for real-time applications."
+      interpretation:"Figure 2.8 compares the processing cost of the Standard AC and the optimized version in terms of proxy operations derived from the complexity formula O(n+m+z). The vertical axis represents the estimated number of operations, while the horizontal axis again shows the two approaches. For the large document with 19,420 characters, the Standard AC incurred approximately 20,526 operations, while the optimized AC required about 19,670. This represents a modest improvement of around 4%. The relatively small gain is expected, since the text length (n) dominates the overall complexity and remains constant in both cases. Nonetheless, the optimized approach never slower and slightly improves execution time, which confirms its practicality for real-time applications.",
+      xaxis: `X-axis: The two versions (Normal vs Improved).`,
+      yaxis: `Y-axis: Memory required to store keywords.`,
+      note: "A lower bar means the improved version uses less memory while still being accurate."
     },
     {
       id: 3,
       picture: LargeThreeAho,
       title: "Figure 2.9 Time Complexity vs Number of Keywords",
-      interpretation:"Figure 2.9 illustrates the relationship between the number of patterns and the corresponding time and space complexity. The horizontal axis shows the number of patterns, while the left vertical axis (blue) measures proxy operations for time complexity, and the right vertical axis (orange) measures the number of trie nodes for space complexity. The results reveal that as the number of patterns increases, the space complexity grows linearly, while the time complexity rises only slightly because text length remains the dominant factor. This demonstrates the trade-off inherent in multi-keyword search: while increasing the pattern set has limited impact on speed, it significantly increases memory requirements. Hence, prioritizing only the most relevant keywords ensures that the algorithm remains both efficient and scalable."
+      interpretation:"Figure 2.9 illustrates the relationship between the number of patterns and the corresponding time and space complexity. The horizontal axis shows the number of patterns, while the left vertical axis (blue) measures proxy operations for time complexity, and the right vertical axis (orange) measures the number of trie nodes for space complexity. The results reveal that as the number of patterns increases, the space complexity grows linearly, while the time complexity rises only slightly because text length remains the dominant factor. This demonstrates the trade-off inherent in multi-keyword search: while increasing the pattern set has limited impact on speed, it significantly increases memory requirements. Hence, prioritizing only the most relevant keywords ensures that the algorithm remains both efficient and scalable.",
+            xaxis: `X-axis: Number of keywords.`,
+      yaxis: `Y-axis: Speed and memory use.`,
+      note: "As the number of keywords grows, both memory use and processing time increase. The improved version grows more slowly, showing it can handle more keywords efficiently."
     },
   ]
   const ahoDataMedium = [
@@ -47,19 +56,28 @@ const SummarizationCharts = () => {
       id: 1,
       picture: MediumOneAho,
       title: "Figure 2.4 Time Complexity vs Number of Keywords",
-      interpretation: "Figure 1 presents the space requirements of the Standard Aho–Corasick algorithm compared with the optimized version. The vertical axis represents memory units in terms of trie nodes, while the horizontal axis distinguishes between the two approaches. The results show that the Standard AC required approximately 17,420 nodes, whereas the optimized version only required about 1,300 nodes. This corresponds to a reduction of nearly 92.5%. The reason for this significant difference is that the Standard AC constructs a trie for the entire vocabulary (670 unique words), while the optimized approach restricts the trie to the top 50 most significant TF–IDF keywords. This demonstrates that optimization substantially improves space efficiency, which is critical for real-time text summarization where memory resources are often limited."
+      interpretation: "Figure 1 presents the space requirements of the Standard Aho–Corasick algorithm compared with the optimized version. The vertical axis represents memory units in terms of trie nodes, while the horizontal axis distinguishes between the two approaches. The results show that the Standard AC required approximately 17,420 nodes, whereas the optimized version only required about 1,300 nodes. This corresponds to a reduction of nearly 92.5%. The reason for this significant difference is that the Standard AC constructs a trie for the entire vocabulary (670 unique words), while the optimized approach restricts the trie to the top 50 most significant TF–IDF keywords. This demonstrates that optimization substantially improves space efficiency, which is critical for real-time text summarization where memory resources are often limited.",
+       xaxis: `X-axis: The two versions (Normal vs Improved).`,
+      yaxis: `Y-axis: Memory required to store keywords.`,
+      note: "A shorter bar means faster performance. The improved version finishes searching more quickly."
     },
     {
       id: 2,
       picture: MediumTwoAho,
       title: "Figure 2.5: Time Complexity Comparison",
-      interpretation: "Figure 2.5 compares the processing cost of the Standard AC and the optimized version in terms of proxy operations derived from the complexity formula O(n+m+z). The vertical axis represents the estimated number of operations, while the horizontal axis again shows the two approaches. For the medium document with 10,915 characters, the Standard AC incurred approximately 11,785 operations, while the optimized AC required about 11,165. This represents a modest improvement of around 5.26%. The relatively small gain is expected, since the text length (nnn) dominates the overall complexity and remains constant in both cases. Nonetheless, the optimized approach is never slower and consistently reduces processing cost, confirming its practicality for real-time applications."
+      interpretation: "Figure 2.5 compares the processing cost of the Standard AC and the optimized version in terms of proxy operations derived from the complexity formula O(n+m+z). The vertical axis represents the estimated number of operations, while the horizontal axis again shows the two approaches. For the medium document with 10,915 characters, the Standard AC incurred approximately 11,785 operations, while the optimized AC required about 11,165. This represents a modest improvement of around 5.26%. The relatively small gain is expected, since the text length (nnn) dominates the overall complexity and remains constant in both cases. Nonetheless, the optimized approach is never slower and consistently reduces processing cost, confirming its practicality for real-time applications.",
+       xaxis: `X-axis: The two versions (Normal vs Improved).`,
+      yaxis: `Y-axis: Memory required to store keywords.`,
+      note: "A lower bar means the improved version uses less memory while still being accurate."
     },
     {
       id: 3,
       picture: MediumThreeAho,
       title: "Figure 2.6 Trade-off Between Time and Space Complexity",
-      interpretation: "Figure 2.6 illustrates the relationship between the number of patterns and the corresponding time and space complexity. The horizontal axis shows the number of patterns, while the left vertical axis (blue) measures proxy operations for time complexity, and the right vertical axis (orange) measures the number of trie nodes for space complexity. The results reveal that as the number of patterns increases, the space complexity grows linearly, while the time complexity rises only slightly because text length remains the dominant factor. This demonstrates the trade-off inherent in multi-keyword search, while expanding the pattern set has limited impact on execution time, it significantly increases memory requirements. By restricting the trie to only the most relevant keywords, the optimized approach achieves scalability without sacrificing performance."
+      interpretation: "Figure 2.6 illustrates the relationship between the number of patterns and the corresponding time and space complexity. The horizontal axis shows the number of patterns, while the left vertical axis (blue) measures proxy operations for time complexity, and the right vertical axis (orange) measures the number of trie nodes for space complexity. The results reveal that as the number of patterns increases, the space complexity grows linearly, while the time complexity rises only slightly because text length remains the dominant factor. This demonstrates the trade-off inherent in multi-keyword search, while expanding the pattern set has limited impact on execution time, it significantly increases memory requirements. By restricting the trie to only the most relevant keywords, the optimized approach achieves scalability without sacrificing performance.",
+      xaxis: `X-axis: Number of keywords.`,
+      yaxis: `Y-axis: Speed and memory use.`,
+      note: "As the number of keywords grows, both memory use and processing time increase. The improved version grows more slowly, showing it can handle more keywords efficiently."
     },
     
   ]
@@ -69,21 +87,27 @@ const SummarizationCharts = () => {
       picture: SmallOneAho,
       title: "Figure 2.1 Time Complexity vs Number of Keywords",
       interpretation: "Figure 2.1 compares the space requirements of the Standard Aho–Corasick algorithm and its optimized version. The vertical axis represents memory units in terms of trie nodes, while the horizontal axis distinguishes the two approaches. The Standard AC required approximately 7,930 nodes, while the optimized version only needed about 1,300 nodes. This corresponds to an 83.61% reduction in memory usage. The reduction is achieved by restricting the trie construction to only the top 50 TF–IDF keywords instead of the full 305-word vocabulary. This result highlights that the optimized AC dramatically improves space efficiency, which is crucial for real-time applications where memory resources are limited.",
-      axes: `X-axis: The two versions (Normal vs Improved).
-Y-axis: Memory required to store keywords.`,
+      xaxis: `X-axis: The two versions (Normal vs Improved).`,
+      yaxis: `Y-axis: Memory required to store keywords.`,
       note: "A shorter bar means faster performance. The improved version finishes searching more quickly."
     },
     {
       id: 2,
       picture: SmallTwoAho,
       title: "Figure 2.2 Space Complexity vs Number of Keywords",
-      interpretation: "Figure 2.2 shows the processing cost of Standard AC versus the optimized version based on the complexity formula O(n+m+z). The vertical axis represents the estimated number of operations, while the horizontal axis differentiates the two approaches. For the small document of 4,577 characters, the Standard AC incurred about 5,082 operations, while the optimized AC required approximately 4,827 operations. This translates to a 5.02% reduction in processing cost. Although the improvement is modest, it confirms that the optimized AC consistently reduces runtime workload without introducing additional overhead. The smaller gain in time compared to space is expected since the text length (n) dominates the overall complexity."
+      interpretation: "Figure 2.2 shows the processing cost of Standard AC versus the optimized version based on the complexity formula O(n+m+z). The vertical axis represents the estimated number of operations, while the horizontal axis differentiates the two approaches. For the small document of 4,577 characters, the Standard AC incurred about 5,082 operations, while the optimized AC required approximately 4,827 operations. This translates to a 5.02% reduction in processing cost. Although the improvement is modest, it confirms that the optimized AC consistently reduces runtime workload without introducing additional overhead. The smaller gain in time compared to space is expected since the text length (n) dominates the overall complexity.",
+      xaxis: `X-axis: The two versions (Normal vs Improved).`,
+      yaxis: `Y-axis: Memory required to store keywords.`,
+      note: "A lower bar means the improved version uses less memory while still being accurate."
     },
     {
       id: 3,
       picture: SmallThreeAho,
       title: "Figure 2.3 Trade-off Between Time and Space Complexity",
-      interpretation: "Figure 2.3 illustrates the relationship between the number of patterns and both time and space complexity. The horizontal axis shows the number of patterns, while the left vertical axis (blue) represents proxy operations for time complexity, and the right vertical axis (orange) represents the number of trie nodes. The graph demonstrates that space complexity grows linearly with the number of patterns, while time complexity increases only slightly, as the text length remains the dominant factor. This trade-off shows that expanding the pattern set has minimal impact on runtime but significantly increases memory consumption. By restricting the trie to only the most relevant keywords, the optimized AC achieves scalability and efficiency."
+      interpretation: "Figure 2.3 illustrates the relationship between the number of patterns and both time and space complexity. The horizontal axis shows the number of patterns, while the left vertical axis (blue) represents proxy operations for time complexity, and the right vertical axis (orange) represents the number of trie nodes. The graph demonstrates that space complexity grows linearly with the number of patterns, while time complexity increases only slightly, as the text length remains the dominant factor. This trade-off shows that expanding the pattern set has minimal impact on runtime but significantly increases memory consumption. By restricting the trie to only the most relevant keywords, the optimized AC achieves scalability and efficiency.",
+      xaxis: `X-axis: Number of keywords.`,
+      yaxis: `Y-axis: Speed and memory use.`,
+      note: "As the number of keywords grows, both memory use and processing time increase. The improved version grows more slowly, showing it can handle more keywords efficiently."
     }
   ]
   const dataForLarge = [
@@ -805,6 +829,11 @@ Y-axis: Memory required to store keywords.`,
               <img src={item.picture} alt={item.title} className="w-full h-64 object-contain rounded-lg mb-3" />
               <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
               <p className="text-gray-700 text-sm text-justify mb-2">{item.interpretation}</p>
+              <div className='text-xs font-bold text-gray-900 italic mt-auto'>
+                {item.xaxis && <p>{item.xaxis}</p>}
+                {item.yaxis && <p>{item.yaxis}</p>}
+                {item.note && <p>{item.note}</p>}
+              </div>
             </div>
           ))}
         </div>
@@ -824,6 +853,11 @@ Y-axis: Memory required to store keywords.`,
               <img src={item.picture} alt={item.title} className="w-full h-64 object-contain rounded-lg mb-3" />
               <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
               <p className="text-gray-700 text-sm text-justify mb-2">{item.interpretation}</p>
+              <div className='text-xs font-bold text-gray-900 italic mt-auto'>
+                {item.xaxis && <p>{item.xaxis}</p>}
+                {item.yaxis && <p>{item.yaxis}</p>}
+                {item.note && <p>{item.note}</p>}
+              </div>
             </div>
           ))}
         </div>
@@ -843,6 +877,11 @@ Y-axis: Memory required to store keywords.`,
               <img src={item.picture} alt={item.title} className="w-full h-64 object-contain rounded-lg mb-3" />
               <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
               <p className="text-gray-700 text-sm text-justify mb-2">{item.interpretation}</p>
+              <div className='text-xs font-bold text-gray-900 italic mt-auto'>
+                {item.xaxis && <p>{item.xaxis}</p>}
+                {item.yaxis && <p>{item.yaxis}</p>}
+                {item.note && <p>{item.note}</p>}
+              </div>
             </div>
           ))}
         </div>
