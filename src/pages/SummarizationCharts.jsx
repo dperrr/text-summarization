@@ -27,19 +27,28 @@ const SummarizationCharts = () => {
       id: 1,
       picture: LargeOneAho,
       title: "Figure 2.7 Time Complexity vs Number of Keywords",
-      interpretation:"Figure 2.7 presents the space requirements of the Standard Aho–Corasick algorithm compared with the optimized version. The vertical axis represents memory units in terms of trie nodes, while the horizontal axis distinguishes between the two approaches. The results show that the Standard AC required approximately 23,556 nodes, whereas the optimized version only required about 1,300 nodes. This corresponds to a reduction of nearly 94%. The reason for this drastic difference is that the Standard AC constructs a trie for the entire vocabulary (906 unique words), while the optimized approach restricts the trie to the top 50 most significant TF-IDF keywords. This demonstrates that optimization substantially improves space efficiency, which is critical for real-time text summarization where memory is often constrained."
+      interpretation:"Figure 2.7 presents the space requirements of the Standard Aho–Corasick algorithm compared with the optimized version. The vertical axis represents memory units in terms of trie nodes, while the horizontal axis distinguishes between the two approaches. The results show that the Standard AC required approximately 23,556 nodes, whereas the optimized version only required about 1,300 nodes. This corresponds to a reduction of nearly 94%. The reason for this drastic difference is that the Standard AC constructs a trie for the entire vocabulary (906 unique words), while the optimized approach restricts the trie to the top 50 most significant TF-IDF keywords. This demonstrates that optimization substantially improves space efficiency, which is critical for real-time text summarization where memory is often constrained.",
+        xaxis: `X-axis: The two versions (Normal vs Improved).`,
+      yaxis: `Y-axis: Memory required to store keywords.`,
+      note: "A shorter bar means faster performance. The improved version finishes searching more quickly."
     },
     {
       id: 2,
       picture: LargeTwoAho,
       title: "Figure 2.8 Time Complexity vs Number of Keywords",
-      interpretation:"Figure 2.8 compares the processing cost of the Standard AC and the optimized version in terms of proxy operations derived from the complexity formula O(n+m+z). The vertical axis represents the estimated number of operations, while the horizontal axis again shows the two approaches. For the large document with 19,420 characters, the Standard AC incurred approximately 20,526 operations, while the optimized AC required about 19,670. This represents a modest improvement of around 4%. The relatively small gain is expected, since the text length (n) dominates the overall complexity and remains constant in both cases. Nonetheless, the optimized approach never slower and slightly improves execution time, which confirms its practicality for real-time applications."
+      interpretation:"Figure 2.8 compares the processing cost of the Standard AC and the optimized version in terms of proxy operations derived from the complexity formula O(n+m+z). The vertical axis represents the estimated number of operations, while the horizontal axis again shows the two approaches. For the large document with 19,420 characters, the Standard AC incurred approximately 20,526 operations, while the optimized AC required about 19,670. This represents a modest improvement of around 4%. The relatively small gain is expected, since the text length (n) dominates the overall complexity and remains constant in both cases. Nonetheless, the optimized approach never slower and slightly improves execution time, which confirms its practicality for real-time applications.",
+      xaxis: `X-axis: The two versions (Normal vs Improved).`,
+      yaxis: `Y-axis: Memory required to store keywords.`,
+      note: "A lower bar means the improved version uses less memory while still being accurate."
     },
     {
       id: 3,
       picture: LargeThreeAho,
       title: "Figure 2.9 Time Complexity vs Number of Keywords",
-      interpretation:"Figure 2.9 illustrates the relationship between the number of patterns and the corresponding time and space complexity. The horizontal axis shows the number of patterns, while the left vertical axis (blue) measures proxy operations for time complexity, and the right vertical axis (orange) measures the number of trie nodes for space complexity. The results reveal that as the number of patterns increases, the space complexity grows linearly, while the time complexity rises only slightly because text length remains the dominant factor. This demonstrates the trade-off inherent in multi-keyword search: while increasing the pattern set has limited impact on speed, it significantly increases memory requirements. Hence, prioritizing only the most relevant keywords ensures that the algorithm remains both efficient and scalable."
+      interpretation:"Figure 2.9 illustrates the relationship between the number of patterns and the corresponding time and space complexity. The horizontal axis shows the number of patterns, while the left vertical axis (blue) measures proxy operations for time complexity, and the right vertical axis (orange) measures the number of trie nodes for space complexity. The results reveal that as the number of patterns increases, the space complexity grows linearly, while the time complexity rises only slightly because text length remains the dominant factor. This demonstrates the trade-off inherent in multi-keyword search: while increasing the pattern set has limited impact on speed, it significantly increases memory requirements. Hence, prioritizing only the most relevant keywords ensures that the algorithm remains both efficient and scalable.",
+            xaxis: `X-axis: Number of keywords.`,
+      yaxis: `Y-axis: Speed and memory use.`,
+      note: "As the number of keywords grows, both memory use and processing time increase. The improved version grows more slowly, showing it can handle more keywords efficiently."
     },
   ]
   const ahoDataMedium = [
@@ -47,19 +56,28 @@ const SummarizationCharts = () => {
       id: 1,
       picture: MediumOneAho,
       title: "Figure 2.4 Time Complexity vs Number of Keywords",
-      interpretation: "Figure 1 presents the space requirements of the Standard Aho–Corasick algorithm compared with the optimized version. The vertical axis represents memory units in terms of trie nodes, while the horizontal axis distinguishes between the two approaches. The results show that the Standard AC required approximately 17,420 nodes, whereas the optimized version only required about 1,300 nodes. This corresponds to a reduction of nearly 92.5%. The reason for this significant difference is that the Standard AC constructs a trie for the entire vocabulary (670 unique words), while the optimized approach restricts the trie to the top 50 most significant TF–IDF keywords. This demonstrates that optimization substantially improves space efficiency, which is critical for real-time text summarization where memory resources are often limited."
+      interpretation: "Figure 1 presents the space requirements of the Standard Aho–Corasick algorithm compared with the optimized version. The vertical axis represents memory units in terms of trie nodes, while the horizontal axis distinguishes between the two approaches. The results show that the Standard AC required approximately 17,420 nodes, whereas the optimized version only required about 1,300 nodes. This corresponds to a reduction of nearly 92.5%. The reason for this significant difference is that the Standard AC constructs a trie for the entire vocabulary (670 unique words), while the optimized approach restricts the trie to the top 50 most significant TF–IDF keywords. This demonstrates that optimization substantially improves space efficiency, which is critical for real-time text summarization where memory resources are often limited.",
+       xaxis: `X-axis: The two versions (Normal vs Improved).`,
+      yaxis: `Y-axis: Memory required to store keywords.`,
+      note: "A shorter bar means faster performance. The improved version finishes searching more quickly."
     },
     {
       id: 2,
       picture: MediumTwoAho,
       title: "Figure 2.5: Time Complexity Comparison",
-      interpretation: "Figure 2.5 compares the processing cost of the Standard AC and the optimized version in terms of proxy operations derived from the complexity formula O(n+m+z). The vertical axis represents the estimated number of operations, while the horizontal axis again shows the two approaches. For the medium document with 10,915 characters, the Standard AC incurred approximately 11,785 operations, while the optimized AC required about 11,165. This represents a modest improvement of around 5.26%. The relatively small gain is expected, since the text length (nnn) dominates the overall complexity and remains constant in both cases. Nonetheless, the optimized approach is never slower and consistently reduces processing cost, confirming its practicality for real-time applications."
+      interpretation: "Figure 2.5 compares the processing cost of the Standard AC and the optimized version in terms of proxy operations derived from the complexity formula O(n+m+z). The vertical axis represents the estimated number of operations, while the horizontal axis again shows the two approaches. For the medium document with 10,915 characters, the Standard AC incurred approximately 11,785 operations, while the optimized AC required about 11,165. This represents a modest improvement of around 5.26%. The relatively small gain is expected, since the text length (nnn) dominates the overall complexity and remains constant in both cases. Nonetheless, the optimized approach is never slower and consistently reduces processing cost, confirming its practicality for real-time applications.",
+       xaxis: `X-axis: The two versions (Normal vs Improved).`,
+      yaxis: `Y-axis: Memory required to store keywords.`,
+      note: "A lower bar means the improved version uses less memory while still being accurate."
     },
     {
       id: 3,
       picture: MediumThreeAho,
       title: "Figure 2.6 Trade-off Between Time and Space Complexity",
-      interpretation: "Figure 2.6 illustrates the relationship between the number of patterns and the corresponding time and space complexity. The horizontal axis shows the number of patterns, while the left vertical axis (blue) measures proxy operations for time complexity, and the right vertical axis (orange) measures the number of trie nodes for space complexity. The results reveal that as the number of patterns increases, the space complexity grows linearly, while the time complexity rises only slightly because text length remains the dominant factor. This demonstrates the trade-off inherent in multi-keyword search, while expanding the pattern set has limited impact on execution time, it significantly increases memory requirements. By restricting the trie to only the most relevant keywords, the optimized approach achieves scalability without sacrificing performance."
+      interpretation: "Figure 2.6 illustrates the relationship between the number of patterns and the corresponding time and space complexity. The horizontal axis shows the number of patterns, while the left vertical axis (blue) measures proxy operations for time complexity, and the right vertical axis (orange) measures the number of trie nodes for space complexity. The results reveal that as the number of patterns increases, the space complexity grows linearly, while the time complexity rises only slightly because text length remains the dominant factor. This demonstrates the trade-off inherent in multi-keyword search, while expanding the pattern set has limited impact on execution time, it significantly increases memory requirements. By restricting the trie to only the most relevant keywords, the optimized approach achieves scalability without sacrificing performance.",
+      xaxis: `X-axis: Number of keywords.`,
+      yaxis: `Y-axis: Speed and memory use.`,
+      note: "As the number of keywords grows, both memory use and processing time increase. The improved version grows more slowly, showing it can handle more keywords efficiently."
     },
     
   ]
@@ -68,19 +86,28 @@ const SummarizationCharts = () => {
       id: 1,
       picture: SmallOneAho,
       title: "Figure 2.1 Time Complexity vs Number of Keywords",
-      interpretation: "Figure 2.1 compares the space requirements of the Standard Aho–Corasick algorithm and its optimized version. The vertical axis represents memory units in terms of trie nodes, while the horizontal axis distinguishes the two approaches. The Standard AC required approximately 7,930 nodes, while the optimized version only needed about 1,300 nodes. This corresponds to an 83.61% reduction in memory usage. The reduction is achieved by restricting the trie construction to only the top 50 TF–IDF keywords instead of the full 305-word vocabulary. This result highlights that the optimized AC dramatically improves space efficiency, which is crucial for real-time applications where memory resources are limited."
+      interpretation: "Figure 2.1 compares the space requirements of the Standard Aho–Corasick algorithm and its optimized version. The vertical axis represents memory units in terms of trie nodes, while the horizontal axis distinguishes the two approaches. The Standard AC required approximately 7,930 nodes, while the optimized version only needed about 1,300 nodes. This corresponds to an 83.61% reduction in memory usage. The reduction is achieved by restricting the trie construction to only the top 50 TF–IDF keywords instead of the full 305-word vocabulary. This result highlights that the optimized AC dramatically improves space efficiency, which is crucial for real-time applications where memory resources are limited.",
+      xaxis: `X-axis: The two versions (Normal vs Improved).`,
+      yaxis: `Y-axis: Memory required to store keywords.`,
+      note: "A shorter bar means faster performance. The improved version finishes searching more quickly."
     },
     {
       id: 2,
       picture: SmallTwoAho,
       title: "Figure 2.2 Space Complexity vs Number of Keywords",
-      interpretation: "Figure 2.2 shows the processing cost of Standard AC versus the optimized version based on the complexity formula O(n+m+z). The vertical axis represents the estimated number of operations, while the horizontal axis differentiates the two approaches. For the small document of 4,577 characters, the Standard AC incurred about 5,082 operations, while the optimized AC required approximately 4,827 operations. This translates to a 5.02% reduction in processing cost. Although the improvement is modest, it confirms that the optimized AC consistently reduces runtime workload without introducing additional overhead. The smaller gain in time compared to space is expected since the text length (n) dominates the overall complexity."
+      interpretation: "Figure 2.2 shows the processing cost of Standard AC versus the optimized version based on the complexity formula O(n+m+z). The vertical axis represents the estimated number of operations, while the horizontal axis differentiates the two approaches. For the small document of 4,577 characters, the Standard AC incurred about 5,082 operations, while the optimized AC required approximately 4,827 operations. This translates to a 5.02% reduction in processing cost. Although the improvement is modest, it confirms that the optimized AC consistently reduces runtime workload without introducing additional overhead. The smaller gain in time compared to space is expected since the text length (n) dominates the overall complexity.",
+      xaxis: `X-axis: The two versions (Normal vs Improved).`,
+      yaxis: `Y-axis: Memory required to store keywords.`,
+      note: "A lower bar means the improved version uses less memory while still being accurate."
     },
     {
       id: 3,
       picture: SmallThreeAho,
       title: "Figure 2.3 Trade-off Between Time and Space Complexity",
-      interpretation: "Figure 2.3 illustrates the relationship between the number of patterns and both time and space complexity. The horizontal axis shows the number of patterns, while the left vertical axis (blue) represents proxy operations for time complexity, and the right vertical axis (orange) represents the number of trie nodes. The graph demonstrates that space complexity grows linearly with the number of patterns, while time complexity increases only slightly, as the text length remains the dominant factor. This trade-off shows that expanding the pattern set has minimal impact on runtime but significantly increases memory consumption. By restricting the trie to only the most relevant keywords, the optimized AC achieves scalability and efficiency."
+      interpretation: "Figure 2.3 illustrates the relationship between the number of patterns and both time and space complexity. The horizontal axis shows the number of patterns, while the left vertical axis (blue) represents proxy operations for time complexity, and the right vertical axis (orange) represents the number of trie nodes. The graph demonstrates that space complexity grows linearly with the number of patterns, while time complexity increases only slightly, as the text length remains the dominant factor. This trade-off shows that expanding the pattern set has minimal impact on runtime but significantly increases memory consumption. By restricting the trie to only the most relevant keywords, the optimized AC achieves scalability and efficiency.",
+      xaxis: `X-axis: Number of keywords.`,
+      yaxis: `Y-axis: Speed and memory use.`,
+      note: "As the number of keywords grows, both memory use and processing time increase. The improved version grows more slowly, showing it can handle more keywords efficiently."
     }
   ]
   const dataForLarge = [
@@ -88,26 +115,34 @@ const SummarizationCharts = () => {
       id: 1,
       picture: LargeOne,
       title: "Figure 1.9 score Distribution – Large Document",
-      interpretation: "The histogram illustrates the distribution of importance scores for all 260 sentences in the large document. The scores cluster around the mean value of 2.45 with a standard deviation of 1.22, indicating moderate variability. Most sentences fall between 1.5–3.5, while only a few receive very high scores (above 5.0), including the top-ranked sentence (Score: 8.14). This distribution reflects TF-IDF’s capacity to assign higher weights only to sentences containing statistically significant terms, ensuring that the majority contribute context while only select sentences emerge as central for summarization."
+      interpretation: "The histogram illustrates the distribution of importance scores for all 260 sentences in the large document. The scores cluster around the mean value of 2.45 with a standard deviation of 1.22, indicating moderate variability. Most sentences fall between 1.5–3.5, while only a few receive very high scores (above 5.0), including the top-ranked sentence (Score: 8.14). This distribution reflects TF-IDF’s capacity to assign higher weights only to sentences containing statistically significant terms, ensuring that the majority contribute context while only select sentences emerge as central for summarization.",
+      xaxis: `X-axis: Sentence importance score (TF-IDF weighted value)`,
+      yaxis: `Y-axis: Number of sentences`
     },
     {
       id: 2,
       picture: LargeTwo,
       title: "Figure 1.10 Sentence Importance Scores",
-      interpretation: "This figure maps the relative importance of each sentence across the document, with red markers highlighting those chosen for the summary. Peaks in importance coincide with sentences covering critical themes, such as global income categories (Sentence 108, Score: 8.14), COVID-19 responses (Sentence 61, Score: 4.74), and literature on Trade Promotion Organizations (Sentence 7, Score: 4.90). The strong alignment of summary sentences with these peaks demonstrates TF-IDF’s reliability in identifying thematically central content. These findings confirm that TF-IDF prioritizes both conceptual frameworks and empirical insights, ensuring coverage of theoretical and applied discussions."
+      interpretation: "This figure maps the relative importance of each sentence across the document, with red markers highlighting those chosen for the summary. Peaks in importance coincide with sentences covering critical themes, such as global income categories (Sentence 108, Score: 8.14), COVID-19 responses (Sentence 61, Score: 4.74), and literature on Trade Promotion Organizations (Sentence 7, Score: 4.90). The strong alignment of summary sentences with these peaks demonstrates TF-IDF’s reliability in identifying thematically central content. These findings confirm that TF-IDF prioritizes both conceptual frameworks and empirical insights, ensuring coverage of theoretical and applied discussions.",
+      xaxis: `X-axis: Sentence index`,
+      yaxis: `Y-axis: Normalized importance score`
     },
     {
       id: 3,
       picture: LargeThree,
       title: "Figure 1.11 Top 10 Words by TF-IDF", 
-      interpretation: "The top keywords (e.g., “tpos,” “income,” “countries,” “covid,” “percent”) emphasize the document’s focus on trade promotion organizations (TPOs), global economic classifications, and pandemic-related impacts. These domain-specific terms, drawn from a vocabulary reduced to 756 meaningful words after stopword removal, highlight TF-IDF’s ability to extract semantically relevant features. With 87.0% vocabulary coverage in the summary, the method successfully retains the majority of the document’s conceptual lexicon, ensuring that its thematic integrity remains intact."
+      interpretation: "The top keywords (e.g., “tpos,” “income,” “countries,” “covid,” “percent”) emphasize the document’s focus on trade promotion organizations (TPOs), global economic classifications, and pandemic-related impacts. These domain-specific terms, drawn from a vocabulary reduced to 756 meaningful words after stopword removal, highlight TF-IDF’s ability to extract semantically relevant features. With 87.0% vocabulary coverage in the summary, the method successfully retains the majority of the document’s conceptual lexicon, ensuring that its thematic integrity remains intact.",
+            xaxis: `X-axis: TF-IDF score of each word`,
+            yaxis: `Y-axis: Top 10 words ranked by importance`
 
     },
     {
       id: 4,
       picture: LargeFour,
       title: "Figure 1.12 Sentence Length vs Importance",
-      interpretation: "The chart shows that longer sentences tend to be picked as more important for summaries. This is because they usually hold more information. However, this can sometimes overlook short but meaningful sentences. This means the method works well but may need extra steps to balance long and short sentences fairly."
+      interpretation: "The chart shows that longer sentences tend to be picked as more important for summaries. This is because they usually hold more information. However, this can sometimes overlook short but meaningful sentences. This means the method works well but may need extra steps to balance long and short sentences fairly.",
+      xaxis: `X-axis: Sentence length (in characters)`,
+      yaxis: `Y-axis: TF-IDF importance score`
     }
   ]
   const dataForMedium = [
@@ -115,25 +150,33 @@ const SummarizationCharts = () => {
       id: 1,
       picture: MediumOne,
       title: "Figure 1.5 Score Distribution – Medium Document",
-      interpretation: "The histogram displays the distribution of importance scores assigned to all 99 sentences in the medium document. The majority of sentences cluster around a mean score of 3.03 with a standard deviation of 0.66, indicating that most sentences hold moderate informational value. Only a limited number of sentences exceed a score of 4.0, which highlights their heightened significance in conveying the document’s core themes. This distribution demonstrates TF-IDF’s ability to distinguish between sentences of central importance and those of peripheral relevance, thereby providing a foundation for accurate extractive summarization."
+      interpretation: "The histogram displays the distribution of importance scores assigned to all 99 sentences in the medium document. The majority of sentences cluster around a mean score of 3.03 with a standard deviation of 0.66, indicating that most sentences hold moderate informational value. Only a limited number of sentences exceed a score of 4.0, which highlights their heightened significance in conveying the document’s core themes. This distribution demonstrates TF-IDF’s ability to distinguish between sentences of central importance and those of peripheral relevance, thereby providing a foundation for accurate extractive summarization.",
+      xaxis: `X-axis: Sentence importance score (TF-IDF weighted value)`,
+      yaxis: `Y-axis: Number of sentences`
     },
     {
       id: 2,
       picture: MedTwo,
       title: "Figure 1.6 Sentence Importance Scores",
-      interpretation: "The bar chart presents sentence importance across the document, with red markers indicating the 40 sentences included in the summary (40%). The alignment of red markers with the score peaks reflects TF-IDF’s effectiveness in capturing thematically rich segments. For instance, the highest-ranked sentence (Index 59, Score: 4.77) pertains to the corporate project “Erebus,” a central element of the narrative. This alignment demonstrates that the extractive process is not arbitrary; rather, it systematically identifies sentences that encapsulate critical information, ensuring the summary retains fidelity to the original document’s key ideas."
+      interpretation: "The bar chart presents sentence importance across the document, with red markers indicating the 40 sentences included in the summary (40%). The alignment of red markers with the score peaks reflects TF-IDF’s effectiveness in capturing thematically rich segments. For instance, the highest-ranked sentence (Index 59, Score: 4.77) pertains to the corporate project “Erebus,” a central element of the narrative. This alignment demonstrates that the extractive process is not arbitrary; rather, it systematically identifies sentences that encapsulate critical information, ensuring the summary retains fidelity to the original document’s key ideas.",
+      xaxis: `X-axis: Sentence index`,
+      yaxis: `Y-axis: Normalized importance score`
     },
     {
       id: 3,
       picture: MediumThree,
       title: "Figure 1.7 Top 10 Words by TF-IDF",
-      interpretation: "This figure highlights the most statistically significant terms within the document, including Kael, Erebus, Horizon, life, humanity, and freedom. These terms align closely with the document’s dominant themes of resistance, survival, and societal control, confirming that the TF-IDF process effectively prioritizes semantically meaningful vocabulary. Preprocessing steps such as comprehensive stopword removal, normalization, and filtering of short tokens reduced the vocabulary to 670 unique terms, thereby increasing focus on relevant content. The summary sentences achieved 63.3% vocabulary coverage, which confirms that key thematic elements were preserved despite document compression."
+      interpretation: "This figure highlights the most statistically significant terms within the document, including Kael, Erebus, Horizon, life, humanity, and freedom. These terms align closely with the document’s dominant themes of resistance, survival, and societal control, confirming that the TF-IDF process effectively prioritizes semantically meaningful vocabulary. Preprocessing steps such as comprehensive stopword removal, normalization, and filtering of short tokens reduced the vocabulary to 670 unique terms, thereby increasing focus on relevant content. The summary sentences achieved 63.3% vocabulary coverage, which confirms that key thematic elements were preserved despite document compression.",
+      xaxis: `X-axis: TF-IDF score of each word`,
+      yaxis: `Y-axis: Top 10 words ranked by importance`
     },
     {
       id: 4,
       picture: MediumFour,
       title: "Figure 1.8 Sentence Length vs Importance",
-      interpretation: "The scatter plot illustrates a strong positive correlation (r = 0.924) between sentence length and TF-IDF importance score, indicating that longer sentences are frequently assigned higher importance. While this relationship supports the notion that extended sentences contain greater informational density, it also reveals a methodological limitation: shorter yet contextually significant sentences may be underweighted. This potential bias suggests that TF-IDF, while effective in capturing information rich passages, may require supplementary methods to balance sentence selection and improve summarization quality."
+      interpretation: "The scatter plot illustrates a strong positive correlation (r = 0.924) between sentence length and TF-IDF importance score, indicating that longer sentences are frequently assigned higher importance. While this relationship supports the notion that extended sentences contain greater informational density, it also reveals a methodological limitation: shorter yet contextually significant sentences may be underweighted. This potential bias suggests that TF-IDF, while effective in capturing information rich passages, may require supplementary methods to balance sentence selection and improve summarization quality.",
+      xaxis: `X-axis: Sentence length (in characters)`,
+      yaxis: `Y-axis: TF-IDF importance score`
     }
   ]
 
@@ -144,8 +187,8 @@ const SummarizationCharts = () => {
       title: "Figure 1.1 Score Distribution",
       interpretation:
         "The histogram shows a right-skewed distribution with most sentences clustering around scores of 2.5-3.0, and fewer sentences achieving high importance scores (3.5-4.0). This indicates that the document contains a mix of supporting content with relatively few highly information-dense sentences, which is typical for academic texts that build arguments progressively.",
-      axes: `X-axis: Sentence importance score (TF-IDF weighted value)
-Y-axis: Number of sentences`
+      xaxis: "X-axis: Sentence importance score (TF-IDF weighted value)",
+      yaxis: "Y-axis: Number of sentences"
     },
     {
       id: 2,
@@ -153,8 +196,8 @@ Y-axis: Number of sentences`
       title: "Figure 1.2 Sentence Importance Scores",
       interpretation:
         "The selected sentences (red circles) are distributed throughout the document rather than clustered in one section, indicating well-balanced information distribution. Peak scores appear around sentences 5, 12, 20, 25, and 32, suggesting key information is spread across introduction, body, and conclusion sections, which reflects good academic writing structure.",
-      axes: `X-axis: Sentence index
-Y-axis: Normalized importance score`
+      xaxis: `X-axis: Sentence index`,
+      yaxis: `Y-axis: Normalized importance score`
     },
     {
       id: 3,
@@ -162,8 +205,9 @@ Y-axis: Normalized importance score`
       title: "Figure 1.3 Top 10 Words By TF-IDF",
       interpretation:
         'The top words - "data," "student," "learning," "systems," "education," "educational" - accurately reflect the document\'s focus on AI in education. The dominance of domain-specific terms like "feedback," "students," and "teachers" demonstrates that TF-IDF successfully identifies the core thematic vocabulary, validating its effectiveness for this educational technology topic.',
-      axes: `X-axis: TF-IDF score of each word
-Y-axis: Top 10 words ranked by importance`
+      xaxis: `X-axis: TF-IDF score of each word`,
+      yaxis: `Y-axis: Top 10 words ranked by importance`
+
     },
     {
       id: 4,
@@ -171,8 +215,8 @@ Y-axis: Top 10 words ranked by importance`
       title: "Figure 1.4 Sentence Length vs Importance",
       interpretation:
         "The strong positive correlation (r = 0.895) indicates that longer sentences in this document tend to contain more important information. This suggests the author uses detailed, comprehensive sentences to convey key concepts about AI in education, which is consistent with academic writing style where complex ideas require elaborate explanation.",
-      axes: `X-axis: Sentence length (in characters)
-Y-axis: TF-IDF importance score`
+      xaxis: `X-axis: Sentence length (in characters)`,
+      yaxis: `Y-axis: TF-IDF importance score`
     },
   ];
 
@@ -260,6 +304,10 @@ Y-axis: TF-IDF importance score`
               <img src={item.picture} alt={item.title} className="w-full h-64 object-contain rounded-lg mb-3" />
               <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
               <p className="text-gray-700 text-sm text-justify mb-2">{item.interpretation}</p>
+              <div className='text-xs font-bold text-gray-900 italic mt-auto'>
+                {item.xaxis && <p>{item.xaxis}</p>}
+                {item.yaxis && <p>{item.yaxis}</p>}
+              </div>
             </div>
           ))}
         </div>
@@ -279,6 +327,10 @@ Y-axis: TF-IDF importance score`
               <img src={item.picture} alt={item.title} className="w-full h-64 object-contain rounded-lg mb-3" />
               <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
               <p className="text-gray-700 text-sm text-justify mb-2">{item.interpretation}</p>
+              <div className='text-xs font-bold text-gray-900 italic mt-auto'>
+                {item.xaxis && <p>{item.xaxis}</p>}
+                {item.yaxis && <p>{item.yaxis}</p>}
+              </div>
             </div>
           ))}
         </div>
@@ -291,7 +343,7 @@ Y-axis: TF-IDF importance score`
 
           </p>
         </div>
-
+        {/* Large Documents Section */}
         <h2 className="text-2xl font-semibold text-center mt-12 mb-6">Large Documents</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
           {dataForLarge.map((item) => (
@@ -299,6 +351,10 @@ Y-axis: TF-IDF importance score`
               <img src={item.picture} alt={item.title} className="w-full h-64 object-contain rounded-lg mb-3" />
               <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
               <p className="text-gray-700 text-sm text-justify mb-2">{item.interpretation}</p>
+              <div className='text-xs font-bold text-gray-900 italic mt-auto'>
+                {item.xaxis && <p>{item.xaxis}</p>}
+                {item.yaxis && <p>{item.yaxis}</p>}
+              </div>
             </div>
           ))}
         </div>
@@ -773,6 +829,11 @@ Y-axis: TF-IDF importance score`
               <img src={item.picture} alt={item.title} className="w-full h-64 object-contain rounded-lg mb-3" />
               <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
               <p className="text-gray-700 text-sm text-justify mb-2">{item.interpretation}</p>
+              <div className='text-xs font-bold text-gray-900 italic mt-auto'>
+                {item.xaxis && <p>{item.xaxis}</p>}
+                {item.yaxis && <p>{item.yaxis}</p>}
+                {item.note && <p>{item.note}</p>}
+              </div>
             </div>
           ))}
         </div>
@@ -792,6 +853,11 @@ Y-axis: TF-IDF importance score`
               <img src={item.picture} alt={item.title} className="w-full h-64 object-contain rounded-lg mb-3" />
               <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
               <p className="text-gray-700 text-sm text-justify mb-2">{item.interpretation}</p>
+              <div className='text-xs font-bold text-gray-900 italic mt-auto'>
+                {item.xaxis && <p>{item.xaxis}</p>}
+                {item.yaxis && <p>{item.yaxis}</p>}
+                {item.note && <p>{item.note}</p>}
+              </div>
             </div>
           ))}
         </div>
@@ -811,6 +877,11 @@ Y-axis: TF-IDF importance score`
               <img src={item.picture} alt={item.title} className="w-full h-64 object-contain rounded-lg mb-3" />
               <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
               <p className="text-gray-700 text-sm text-justify mb-2">{item.interpretation}</p>
+              <div className='text-xs font-bold text-gray-900 italic mt-auto'>
+                {item.xaxis && <p>{item.xaxis}</p>}
+                {item.yaxis && <p>{item.yaxis}</p>}
+                {item.note && <p>{item.note}</p>}
+              </div>
             </div>
           ))}
         </div>
@@ -938,12 +1009,7 @@ Y-axis: TF-IDF importance score`
         </div>
       </details>
 </div>
-
-
-
-     
-
-      
+  
     </div>
   );
 };

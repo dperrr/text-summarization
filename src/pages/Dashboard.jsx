@@ -19,7 +19,7 @@ function Dashboard() {
                         Welcome to AI-Powered
                     </h1>
                     <h1 className="text-6xl font-bold text-gray-900">
-                        <span className='text-purple-700'>Text Summarization</span> and <span className='text-purple-700'>Search System</span>
+                        <span className='text-purple-700'>Text Summarization</span> and <span className='text-purple-700'>with TF-IDF and Aho-Corasick Algorithm</span>
                     </h1>
                     <p className="text-lg text-gray-600 mb-6">
                         This tool enhances document retrieval and summarization using TF-IDF 
