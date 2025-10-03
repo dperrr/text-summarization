@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import pdfToText from 'react-pdftotext';
-import axios from 'axios';
 import Swal from 'sweetalert2';
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
 import { Sparkle } from 'lucide-react';
 import ClipLoader from "react-spinners/ClipLoader";
-import TfidfHeatmap from './TfidfHeatmap';
 import { STOPWORDS } from "../Utils/stopwords.jsx";
-import { askGemini } from "../Utils/api.jsx"
-import Evaluation, { evaluateSummaries } from '../components/evaluation.jsx';
-import fs from 'fs';
+import { askGemini } from "../Utils/old.jsx"
+
+
 
 
 function Summarizer() {
   const [extractiveSummary, setExtractiveSummary] = useState('');
+  const [extractiveCount, setExtractiveCount] = useState('');
   const [text, setText] = useState('');
   const [summary, setSummary] = useState('');
   const [pdfFile, setPdfFile] = useState(null);
@@ -22,10 +21,11 @@ function Summarizer() {
   const [keywords, setKeywords] = useState([]);
   const [keywordsWithScores, setKeywordsWithScores] = useState([]);
   const [summarySentences, setSummarySentences] = useState([]);
-  const [showHeatmap, setShowHeatmap] = useState(false);
-  const [metrics, setMetrics] = useState(null);
-  const [showEvaluation, setShowEvaluation] = useState(false);
-  const [showComparison, setShowComparison] = useState(false);
+  const [outputInfo, setOutputInfo] = useState({
+  size: '',
+  wordCount: 0,
+  characters: 0
+});
 
 
   useEffect(() => {
@@ -177,19 +177,6 @@ const calculateTFIDF = (documents) => {
     }
   }
 
-// // helper function to download JSON in browser
-// const downloadJSON = (data, filename = "summary_results.json") => {
-//   const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-//   const url = URL.createObjectURL(blob);
-
-//   const a = document.createElement("a");
-//   a.href = url;
-//   a.download = filename;
-//   a.click();
-
-//   URL.revokeObjectURL(url);
-// };
-
 const generateSummary = async () => {
   setLoading(true);
 
@@ -271,6 +258,8 @@ const generateSummary = async () => {
     setSummarySentences(finalSentences);
 
     const extractiveSummary = finalSentences.map((s) => s.text.trim()).join(" ");
+    const refinedCount = extractiveSummary.trim().split(/\s+/).length;
+    setExtractiveCount(refinedCount);
     setExtractiveSummary(extractiveSummary);
 
     // ---- Gemini Timing ----
@@ -284,6 +273,18 @@ const generateSummary = async () => {
       refinedSummary = extractiveSummary;
       setSummary(extractiveSummary);
     }
+
+    const wc = refinedSummary.trim().split(/\s+/).length;
+    const charCount = refinedSummary.length;
+    let sizeLabel = "small document";
+    if (wc > 700 && wc <= 2500) sizeLabel = "medium document";
+    else if (wc > 2500) sizeLabel = "large document";
+
+    setOutputInfo({
+      size: sizeLabel,
+      wordCount: wc,
+      characters: charCount
+    });
     const endGem = performance.now();
     const geminiTime = endGem - startGem;
 
@@ -347,6 +348,7 @@ const showComparisonPopup = (extractive, abstractive) => {
             class="w-full border rounded-md p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 h-[580px] resize-none overflow-y-auto"
             readonly
           >${extractive || 'No extractive summary yet'}</textarea>
+          <div>Word Count: ${extractiveCount} words</div>
         </div>
 
         <!-- Abstractive Summary -->
@@ -356,6 +358,7 @@ const showComparisonPopup = (extractive, abstractive) => {
             class="w-full border rounded-md p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 h-[580px] resize-none overflow-y-auto"
             readonly
           >${abstractive || 'No abstractive summary yet'}</textarea>
+          <div>Word Count: ${outputInfo.wordCount} words</div>
         </div>
       </div>
     `,
@@ -367,10 +370,6 @@ const showComparisonPopup = (extractive, abstractive) => {
     }
   });
 };
-
-
-
-
 
   const startDriver = () => {
     const driverObj = driver({
@@ -579,9 +578,12 @@ const showComparisonPopup = (extractive, abstractive) => {
               </div>
             )}
 
-            <div className="text-gray-500 text-sm mt-1">
-              {summary.length} characters | {Math.ceil(summary.length / 250)} min read
-            </div>
+            {summary && (
+              <div className="text-sm mt-2 text-gray-600 space-y-1">
+                <div>Word Count: {outputInfo.wordCount}</div>
+                <div>Characters: {outputInfo.characters}</div>
+              </div>
+            )}
 
             <div className="flex justify-end mt-2 space-x-2">
               <button 
@@ -622,8 +624,20 @@ const showComparisonPopup = (extractive, abstractive) => {
             >
               Show Comparison
             </button>
-
-              
+            <button
+              className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white rounded-sm cursor-pointer"
+              onClick={() => {
+                if (!summary) return Swal.fire('Info', 'Please generate a summary first', 'info');
+                Swal.fire(
+                  'Output Info',
+                  `Word Count: ${outputInfo.wordCount} words<br>
+                  Characters: ${outputInfo.characters}`,
+                  'info'
+                );
+              }}
+            >
+              Check Info
+            </button>
             </div>
           </div>
         </div>
