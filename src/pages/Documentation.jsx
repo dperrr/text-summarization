@@ -8,7 +8,7 @@ const sections = [
   "Example Use Cases",
   "FAQs",
   "Limitations",
-  "Technologies Used",
+  "Technologies And Algorithm Used",
   "Contact",
 ];
 
@@ -38,7 +38,7 @@ export default function Documentation() {
         </nav>
       </aside>
 
-      {/* Main Content */}
+
       <main className="relative z-10 md:w-3/4 p-10 space-y-16 bg-gradient-to-br from-white via-purple-50 to-white">
         {sections.map((sec) => (
           <Section key={sec} id={sec.replace(/\s+/g, "")} title={sec} />
@@ -90,7 +90,7 @@ function getSectionContent(title) {
     case "Features":
       return (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {["Keyword filtering", "Hybrid summarization", "Paste or upload text"].map(f => (
+          {["Keyword filtering", "Hybrid summarization", "Paste or upload text", "Check Comparison of Extractive and Abstractive Summarization", "Show results of summarization"].map(f => (
             <div className="bg-white p-4 rounded-xl shadow hover:shadow-md transition border border-purple-100">
               {f}
             </div>
@@ -129,18 +129,82 @@ function getSectionContent(title) {
       );
 
     case "Limitations":
-      return (
-        <p>
-          The system may miss synonyms (Aho-Corasick limitation) and BART can occasionally hallucinate or over-generalize. Input size limits apply to very large documents.
-        </p>
-      );
+    return (
+      <div className="space-y-4">
+        <ul className="list-disc pl-6 space-y-2 text-justify">
+          <li>
+            <strong>Bias in Summarization Models:</strong> Although AI-powered
+            models like Gemini improve contextual understanding, they may still
+            generate biased or misleading summaries if trained on limited or
+            biased datasets. Critical information may also be omitted if not
+            fine-tuned properly.
+          </li>
 
-    case "Technologies Used":
+          <li>
+            <strong>Scalability with Large Datasets:</strong> While summarization
+            and search perform effectively on standard inputs, very large datasets
+            may cause slower processing speeds and higher memory usage.
+          </li>
+
+          <li>
+            <strong>Computational Resource Demands:</strong> The AI-based
+            summarization requires substantial processing power, potentially
+            reducing responsiveness on low-end devices or in
+            resource-constrained environments.
+          </li>
+
+          <li>
+            <strong>Dependence on Pre-Trained Models:</strong> The study relies on
+            the pre-trained Gemini model, which may not generalize well to unseen
+            domains unless further fine-tuning is applied.
+          </li>
+
+          <li>
+            <strong>Language Limitation:</strong> The system currently supports
+            only English text and does not handle multilingual inputs or
+            translations.
+          </li>
+
+          <li>
+            <strong>Limited Search Contextuality:</strong> The Aho-Corasick
+            algorithm performs exact keyword matching and does not account for
+            synonyms, user intent, or semantic variations.
+          </li>
+
+          <li>
+            <strong>Lack of Session History:</strong> The system operates per
+            session and does not retain a history of previous searches or
+            summaries. This simplifies architecture but limits continuity.
+          </li>
+
+          <li>
+            <strong>Input Size Constraints:</strong>
+            <ul className="list-disc pl-6 mt-1">
+              <li>
+                Small documents (≤700 words) may yield overly concise summaries
+                due to limited context.
+              </li>
+              <li>
+                Medium documents (≤2500 words) perform optimally for both
+                extractive and abstractive summarization.
+              </li>
+              <li>
+                Large documents (≥2500 words) may result in reduced summarization
+                quality or slower processing.
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    );
+
+
+    case "Technologies And Algorithm Used":
       return (
         <ul className="list-disc pl-6">
-          <li>Aho-Corasick – Fast keyword matching</li>
+          <li>Aho-Corasick – Fast keyword matching and Filtering</li>
           <li>TF-IDF – Sentence scoring</li>
-          <li>BART – Abstractive summarization</li>
+          <li>Gemini – Abstractive summarization</li>
           <li>TailwindCSS + React – UI/UX</li>
         </ul>
       );

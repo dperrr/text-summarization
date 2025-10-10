@@ -113,7 +113,7 @@ export default function AboutUs() {
           <div className="rounded-lg border border-gray-300 overflow-hidden">
             <div className="p-6">
               <p className="text-lg">
-                Our project, AI-Powered Text Summarization and Search System, focuses on developing an automated text summarization and search tool that enhances document retrieval efficiency. The system features two summarization modes: one using TF-IDF (Term Frequency-Inverse Document Frequency) to extract key sentences based on statistical word importance and another hybrid mode that integrates a pre-trained AI model (such as T5, BERTSum, or PEGASUS) to generate more context-aware summaries while prioritizing TF-IDF keywords.
+                As digital text continues to grow rapidly, it has become harder to find and summarize relevant information. Traditional methods often provide incomplete or inaccurate results, while AI-based solutions require a lot of computing power, making them difficult for many users to access. This study aims to create an AI-powered system using TF-IDF, Aho-Corasick, and Gemini LLM to improve summarization, making it more efficient, accurate, and accessible. 
               </p>
             </div>
           </div>
