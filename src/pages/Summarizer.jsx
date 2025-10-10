@@ -432,10 +432,18 @@ const showComparisonPopup = (extractive, abstractive) => {
           }
         },
         {
-          element: '#heatmap-button',
+          element: '#comparison-button',
           popover: {
-            title: 'Step 8: Show Heatmap',
-            description: 'Click here to check the pick keyword scores in graph.',
+            title: 'Step 8: Show Comparison',
+            description: 'Click here to show the comparison of abstractive and extractive summary.',
+            position: 'bottom'
+          }
+        },
+        {
+          element: '#checkinfo-button',
+          popover: {
+            title: 'Step 9: Output Info',
+            description: 'Click here to check the output information of the summarization.',
             position: 'bottom'
           }
         }
@@ -496,11 +504,11 @@ const showComparisonPopup = (extractive, abstractive) => {
     <div className="flex flex-col items-center min-h-screen px-6 py-10 mt-20 ">
       <div className="bg-white shadow-md px-1 py-2 rounded-2xl w-full max-w-5xl ngek">
         <h2 className="text-lg font-medium text-white text-center">
-          Briefos - Text Summarization Using TF-IDF and Aho-Corasick Algorithm
+          TextSense - Text Summarization Using TF-IDF and Aho-Corasick Algorithm
         </h2>
       </div>
 
-      <div className='grid grid-cols-2 w-full'>
+      <div className='grid lg:grid-cols-2 sm:grid-cols-1 w-full'>
         <div className="py-5 px-6 w-full max-w-5xl">
           <h2 className="text-gray-700 font-medium">Input</h2>
           <div className="mt-2">
@@ -626,6 +634,7 @@ const showComparisonPopup = (extractive, abstractive) => {
             </button>
             <button
               className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white rounded-sm cursor-pointer"
+              id="checkinfo-button"
               onClick={() => {
                 if (!summary) return Swal.fire('Info', 'Please generate a summary first', 'info');
                 Swal.fire(

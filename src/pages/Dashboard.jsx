@@ -15,13 +15,13 @@ function Dashboard() {
 
             <div className="flex flex-col items-center justify-center text-center px-4">
                 <div className="max-w-5xl space-y-5 mt-10">
-                    <h1 className="text-6xl font-bold text-gray-900">
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
                         Welcome to AI-Powered
                     </h1>
-                    <h1 className="text-6xl font-bold text-gray-900">
-                        <span className='text-purple-700'>Text Summarization</span> and <span className='text-purple-700'>with TF-IDF and Aho-Corasick Algorithm</span>
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
+                        <span className='text-purple-700'>Text Summarization</span> Using <span className='text-purple-700'> TF-IDF and Aho-Corasick Algorithm</span>
                     </h1>
-                    <p className="text-lg text-gray-600 mb-6">
+                    <p className="text-base sm:text-lg text-gray-600 max-w-3xl mx-auto">
                         This tool enhances document retrieval and summarization using TF-IDF 
                         and Aho-Corasick Algorithm, combined with AI for advanced text processing.
                     </p>
