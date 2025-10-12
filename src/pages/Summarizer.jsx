@@ -6,7 +6,7 @@ import "driver.js/dist/driver.css";
 import { Sparkle } from 'lucide-react';
 import ClipLoader from "react-spinners/ClipLoader";
 import { STOPWORDS } from "../Utils/stopwords.jsx";
-import { askGemini } from "../Utils/old.jsx"
+import { askGemini } from "../Utils/api.jsx"
 
 
 
@@ -464,28 +464,35 @@ const showComparisonPopup = (extractive, abstractive) => {
       const extractedText = await pdfToText(file);
       const wordCount = extractedText.trim().split(/\s+/).length;
 
-      setText(extractedText); 
-
       // Input Size Constraint
-      if (wordCount <= 700) {
+      if (wordCount < 7001) {
+        setText(extractedText);
+        if (wordCount <= 700) {
+          Swal.fire(
+            'Small Document',
+            `This is a small document and has a ${wordCount} words. The summary might be too short or vague.`,
+            'info'
+          );
+        } else if (wordCount <= 2500) {
+          Swal.fire(
+            'Medium Document',
+            `This is a medium document and has a ${wordCount} words. Summarization may take longer or lose detail.`,
+            'info'
+          );
+        } else if (wordCount > 4500) {
+          Swal.fire(
+            'Large Document',
+            `This is a large document and has a ${wordCount} words. Ready to summarize!`,
+            'info'
+          );
+        }
+      } else {
         Swal.fire(
-          'Small Document',
-          `This is a small document and has a ${wordCount} words. The summary might be too short or vague.`,
-          'info'
-        );
-      } else if (wordCount <= 2500) {
-        Swal.fire(
-          'Medium Document',
-          `This is a medium document and has a ${wordCount} words. Summarization may take longer or lose detail.`,
-          'info'
-        );
-      } else if (wordCount > 4500) {
-        Swal.fire(
-          'Large Document',
-          `This is a large document and has a ${wordCount} words. Ready to summarize!`,
-          'info'
-        );
-      }
+            'Super Large Document',
+            `This is a  super large document and has a ${wordCount} words. Please Upload a PDF File!`,
+            'warning'
+          );
+       }
 
     } catch (error) {
       console.error('Error extracting text from PDF:', error);
