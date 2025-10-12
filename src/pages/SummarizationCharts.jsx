@@ -556,7 +556,7 @@ const SummarizationCharts = () => {
             </thead>
             <tbody>
               <tr>
-                <td className="border px-4 py-2 font-medium">Briefos</td>
+                <td className="border px-4 py-2 font-medium">TextSense</td>
                 <td className="border px-4 py-2">0.6837</td>
                 <td className="border px-4 py-2">0.4215</td>
                 <td className="border px-4 py-2">0.6203</td>
@@ -599,7 +599,7 @@ const SummarizationCharts = () => {
         <div className="mt-8 p-4 bg-green-50 border border-green-200 rounded-xl">
           <h3 className="text-lg font-semibold text-green-800 mb-2">Evaluation (Small Documents Ranging from 650-550 words)</h3>
           <p className="text-gray-700 text-sm text-justify">
-            For small documents, the proposed system (Briefos) achieved the highest accuracy across all tools, with ROUGE-1 at 0.6837 and BLEU at 0.2565, outperforming abstractive baselines like PEGASUS. This suggests that Briefos excels at condensing shorter texts while maintaining coherence and relevance. In terms of speed, its latency of 1.24s/doc is competitive, being faster than PEGASUS but slightly slower than the extractive TextRank. Overall, the system demonstrates a balanced trade-off between accuracy and efficiency for short inputs.
+            For small documents, the proposed system (TextSense) achieved the highest accuracy across all tools, with ROUGE-1 at 0.6837 and BLEU at 0.2565, outperforming abstractive baselines like PEGASUS. This suggests that TextSense excels at condensing shorter texts while maintaining coherence and relevance. In terms of speed, its latency of 1.24s/doc is competitive, being faster than PEGASUS but slightly slower than the extractive TextRank. Overall, the system demonstrates a balanced trade-off between accuracy and efficiency for short inputs.
 
           </p>
         </div>
@@ -620,7 +620,7 @@ const SummarizationCharts = () => {
             </thead>
             <tbody>
               <tr>
-                <td className="border px-4 py-2 font-medium">Briefos</td>
+                <td className="border px-4 py-2 font-medium">TextSense</td>
                 <td className="border px-4 py-2">0.5123</td>
                 <td className="border px-4 py-2">0.2483</td>
                 <td className="border px-4 py-2">0.3522</td>
@@ -662,7 +662,7 @@ const SummarizationCharts = () => {
         <div className="mt-8 p-4 bg-green-50 border border-green-200 rounded-xl">
           <h3 className="text-lg font-semibold text-green-800 mb-2">Evaluation </h3>
           <p className="text-gray-700 text-sm text-justify">
-           On medium-length texts, Briefos shows a noticeable drop in accuracy (ROUGE-1: 0.5123, BLEU: 0.0486), falling closer to baseline abstractive models like PEGASUS. While it still performs better than T5 and TextRank, the reduction in BLEU indicates challenges in preserving fluency and phrase-level similarity. Moreover, the latency increases to 3.20s/doc, which is slower than T5 but similar to PEGASUS. This indicates that while the system retains strong recall (ROUGE), it becomes less computationally efficient as document size increases.
+           On medium-length texts, TextSense shows a noticeable drop in accuracy (ROUGE-1: 0.5123, BLEU: 0.0486), falling closer to baseline abstractive models like PEGASUS. While it still performs better than T5 and TextRank, the reduction in BLEU indicates challenges in preserving fluency and phrase-level similarity. Moreover, the latency increases to 3.20s/doc, which is slower than T5 but similar to PEGASUS. This indicates that while the system retains strong recall (ROUGE), it becomes less computationally efficient as document size increases.
 
           </p>
         </div>
@@ -691,7 +691,7 @@ const SummarizationCharts = () => {
               </thead>
               <tbody>
                 <tr>
-                  <td className="border px-4 py-2 font-medium">Briefos (Small docs)</td>
+                  <td className="border px-4 py-2 font-medium">TextSense (Small docs)</td>
                   <td className="border px-4 py-2">0.6837</td>
                   <td className="border px-4 py-2">0.4215</td>
                   <td className="border px-4 py-2">0.6203</td>
@@ -700,7 +700,7 @@ const SummarizationCharts = () => {
                   <td className="border px-4 py-2">Stronger than published baselines</td>
                 </tr>
                 <tr>
-                  <td className="border px-4 py-2 font-medium">Briefos (Medium docs)</td>
+                  <td className="border px-4 py-2 font-medium">TextSense (Medium docs)</td>
                   <td className="border px-4 py-2">0.5123</td>
                   <td className="border px-4 py-2">0.2483</td>
                   <td className="border px-4 py-2">0.3522</td>
@@ -709,7 +709,7 @@ const SummarizationCharts = () => {
                   <td className="border px-4 py-2">Accuracy drops on longer input</td>
                 </tr>
                 <tr>
-                  <td className="border px-4 py-2 font-medium">Briefos (Large docs)</td>
+                  <td className="border px-4 py-2 font-medium">TextSense (Large docs)</td>
                   <td className="border px-4 py-2">0.4644</td>
                   <td className="border px-4 py-2">0.2378</td>
                   <td className="border px-4 py-2">0.3449</td>
@@ -755,7 +755,7 @@ const SummarizationCharts = () => {
             Overall Evaluation (Across Document Sizes)
           </h2>
           <p className="text-gray-700 text-sm text-justify mb-6">
-            The results show that the proposed system, Briefos, performs strongly on small documents, outperforming established tools like PEGASUS and T5 in terms of accuracy while maintaining competitive processing speed. This advantage is partly due to the hybrid approach: the TF-IDF algorithm ensures that high-value sentences are prioritized, while the Aho-Corasick algorithm enables efficient keyword matching and highlighting, giving the summaries better topical coverage. However, as document length increases, the system faces limitations. The reliance on TF-IDF can lead to redundancy in longer texts, while Aho-Corasick struggles with capturing deeper semantic relations beyond keyword matching. This results in declining ROUGE and BLEU scores on medium and large inputs, along with increased latency compared to more optimized abstractive models like PEGASUS. Another weakness is that the algorithmic pipeline depends heavily on extractive quality; if the initial sentence selection is suboptimal, even Gemini refinement cannot fully recover fluency or coherence. Despite these challenges, the system remains highly effective for short-text summarization tasks, where keyword-focused extraction and concise refinement align well with the nature of the input. To complement these findings, a user survey will also be conducted to assess readability, coherence, and informativeness, providing a more human-centered evaluation of the strengths and weaknesses of the algorithmic design.
+            The results show that the proposed system, TextSense, performs strongly on small documents, outperforming established tools like PEGASUS and T5 in terms of accuracy while maintaining competitive processing speed. This advantage is partly due to the hybrid approach: the TF-IDF algorithm ensures that high-value sentences are prioritized, while the Aho-Corasick algorithm enables efficient keyword matching and highlighting, giving the summaries better topical coverage. However, as document length increases, the system faces limitations. The reliance on TF-IDF can lead to redundancy in longer texts, while Aho-Corasick struggles with capturing deeper semantic relations beyond keyword matching. This results in declining ROUGE and BLEU scores on medium and large inputs, along with increased latency compared to more optimized abstractive models like PEGASUS. Another weakness is that the algorithmic pipeline depends heavily on extractive quality; if the initial sentence selection is suboptimal, even Gemini refinement cannot fully recover fluency or coherence. Despite these challenges, the system remains highly effective for short-text summarization tasks, where keyword-focused extraction and concise refinement align well with the nature of the input. To complement these findings, a user survey will also be conducted to assess readability, coherence, and informativeness, providing a more human-centered evaluation of the strengths and weaknesses of the algorithmic design.
           </p>
         </div>
         </details>
@@ -955,7 +955,7 @@ const SummarizationCharts = () => {
               </thead>
               <tbody>
                 <tr>
-                  <td className="border px-4 py-2 font-medium">Briefos (Small docs)</td>
+                  <td className="border px-4 py-2 font-medium">TextSense (Small docs)</td>
                   <td className="border px-4 py-2">0.6837</td>
                   <td className="border px-4 py-2">0.4215</td>
                   <td className="border px-4 py-2">0.6203</td>
@@ -963,7 +963,7 @@ const SummarizationCharts = () => {
 
                 </tr>
                 <tr>
-                  <td className="border px-4 py-2 font-medium">Briefos (Medium docs)</td>
+                  <td className="border px-4 py-2 font-medium">TextSense (Medium docs)</td>
                   <td className="border px-4 py-2">0.5123</td>
                   <td className="border px-4 py-2">0.2483</td>
                   <td className="border px-4 py-2">0.3522</td>
@@ -1004,7 +1004,7 @@ const SummarizationCharts = () => {
         <div className="mt-8 p-4 bg-green-50 border border-green-200 rounded-xl">
           <h3 className="text-lg font-semibold text-green-800 mb-2">Overall Evaluation</h3>
           <p className="text-gray-700 text-sm text-justify">
-            The overall evaluation across small, medium, and large documents indicates that Briefos (abstractive summarization) consistently excels in capturing the meaning, structure, and coherence of source texts, particularly for shorter documents, while the extractive system demonstrates stronger fidelity to the original wording and greater stability as document size increases. These results suggest that the integration of both approaches can deliver a balanced system that enhances readability, coherence, and accuracy of generated summaries across varying text lengths. However, quantitative metrics such as ROUGE and BLEU only measure overlap and structural similarity and may not fully capture user-perceived quality, usability, or relevance of the summaries. To address this, a planned user evaluation will complement the automated metrics by assessing perceived clarity, usefulness, and satisfaction with the generated summaries. Taken together, these findings and the forthcoming user feedback will provide a more holistic validation of the system’s ability to meet its intended goals of improving summarization quality, readability, and user experience.
+            The overall evaluation across small, medium, and large documents indicates that TextSense (abstractive summarization) consistently excels in capturing the meaning, structure, and coherence of source texts, particularly for shorter documents, while the extractive system demonstrates stronger fidelity to the original wording and greater stability as document size increases. These results suggest that the integration of both approaches can deliver a balanced system that enhances readability, coherence, and accuracy of generated summaries across varying text lengths. However, quantitative metrics such as ROUGE and BLEU only measure overlap and structural similarity and may not fully capture user-perceived quality, usability, or relevance of the summaries. To address this, a planned user evaluation will complement the automated metrics by assessing perceived clarity, usefulness, and satisfaction with the generated summaries. Taken together, these findings and the forthcoming user feedback will provide a more holistic validation of the system’s ability to meet its intended goals of improving summarization quality, readability, and user experience.
           </p>
         </div>
       </details>

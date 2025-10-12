@@ -508,13 +508,13 @@ const showComparisonPopup = (extractive, abstractive) => {
         </h2>
       </div>
 
-      <div className='grid lg:grid-cols-2 sm:grid-cols-1 w-full'>
+      <div className='grid grid-cols-1 lg:grid-cols-2 gap-8 w-full px-4 sm:px-6 lg:px-8'>
         <div className="py-5 px-6 w-full max-w-5xl">
-          <h2 className="text-gray-700 font-medium">Input</h2>
+          <h2 className="text-gray-700 font-medium text-lg sm:text-xl">Input</h2>
           <div className="mt-2">
             <textarea
               id="text-input"
-              className="w-full border rounded-md p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 min-h-[580px]"
+              className="w-full border rounded-md p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 min-h-[300px] sm:min-h-[400px] md:min-h-[480px] lg:min-h-[580px]"
               placeholder="Write or upload a text to summarize..."
               value={text}
               onChange={(e) => setText(e.target.value)}
@@ -534,7 +534,7 @@ const showComparisonPopup = (extractive, abstractive) => {
             </div>
           </div>
 
-          <div className="flex justify-end space-x-2 mt-3">
+          <div className="flex flex-wrap justify-end gap-2 mt-4">
             <label id="upload-btn" className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white rounded-sm cursor-pointer transition hover:shadow-lg shadow-purple-800">
               Upload
               <input
@@ -570,10 +570,10 @@ const showComparisonPopup = (extractive, abstractive) => {
         </div>
 
         <div className="py-5 px-6 w-full max-w-5xl">
-          <h2 className="text-gray-700 font-medium">Output</h2>
+          <h2 className="text-gray-700 font-medium text-lg sm:text-xl">Output</h2>
           <div className="mt-2 relative">
             <textarea
-              className="w-full border rounded-md p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 min-h-[580px]"
+              className="w-full border rounded-md p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 min-h-[300px] sm:min-h-[400px] md:min-h-[480px] lg:min-h-[580px]"
               placeholder="Your summary will be output as a paragraph by default"
               value={summary}
               id='output-area'
@@ -593,10 +593,10 @@ const showComparisonPopup = (extractive, abstractive) => {
               </div>
             )}
 
-            <div className="flex justify-end mt-2 space-x-2">
+            <div className="flex flex-wrap justify-end sm:justify-end gap-2 mt-4 w-full">
               <button 
                 id="copy-button"
-                className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white rounded-sm cursor-pointer"
+                className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white text-sm sm:text-base rounded-sm cursor-pointer"
                 onClick={() => {
                   navigator.clipboard.writeText(summary);
                   Swal.fire('Copied', 'Summary copied to clipboard.', 'success');
@@ -607,7 +607,7 @@ const showComparisonPopup = (extractive, abstractive) => {
               </button>
               <button
                 id="result-button"
-                className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white rounded-sm cursor-pointer"
+                className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white text-sm sm:text-base rounded-sm cursor-pointer"
                 onClick={() => {
                   if (keywordsWithScores && summarySentences) {
                     showResultsPopup(keywordsWithScores, summarySentences);
@@ -620,7 +620,7 @@ const showComparisonPopup = (extractive, abstractive) => {
               Show Results
               </button>
              <button
-              className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white rounded-sm cursor-pointer"
+              className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white text-sm sm:text-base rounded-sm cursor-pointer"
               id="comparison-button"
               onClick={() => {
                 if (extractiveSummary || summary) {
@@ -633,7 +633,7 @@ const showComparisonPopup = (extractive, abstractive) => {
               Show Comparison
             </button>
             <button
-              className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white rounded-sm cursor-pointer"
+              className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white text-sm sm:text-base rounded-sm cursor-pointer"
               id="checkinfo-button"
               onClick={() => {
                 if (!summary) return Swal.fire('Info', 'Please generate a summary first', 'info');

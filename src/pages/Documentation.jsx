@@ -70,10 +70,10 @@ function getSectionContent(title) {
       return (
         <>
           <p>
-            This AI-powered summarization tool blends intelligent keyword filtering (Aho-Corasick), scoring (TF-IDF), and natural language generation (BART) to help users extract insights from large documents.
+            This AI-powered summarization tool blends intelligent keyword filtering (Aho-Corasick), scoring (TF-IDF), and natural language generation (GEMINI) to help users extract insights from large documents.
           </p>
           <Callout>
-            Ideal for students, researchers, and knowledge workers seeking clarity in complexity.
+            Ideal for students, researchers, and to anyone who wants their text summarized.
           </Callout>
         </>
       );
@@ -81,9 +81,9 @@ function getSectionContent(title) {
     case "How It Works":
       return (
         <ul className="list-disc pl-6 space-y-2">
-          <li><strong>Aho-Corasick:</strong> Filters documents using exact keyword matches.</li>
           <li><strong>TF-IDF:</strong> Scores sentence relevance.</li>
-          <li><strong>BART:</strong> Generates a human-like summary from key sentences.</li>
+          <li><strong>Aho-Corasick:</strong> Filters documents using exact keyword matches.</li>
+          <li><strong>Gemini:</strong> Generates a human-like summary from key sentences.</li>
         </ul>
       );
 
