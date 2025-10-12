@@ -4,7 +4,6 @@ import Questions from '../components/Questions';
 import Footer from '../components/Footer.jsx';
 import { FileText, Search } from 'lucide-react';
 import { Link } from "react-router-dom"; 
-import ReadingIllustration from '../assets/undraw_artificial-intelligence_fuvd.svg';
 
 
 function Dashboard() {
@@ -26,7 +25,7 @@ function Dashboard() {
                         and Aho-Corasick Algorithm, combined with AI for advanced text processing.
                     </p>
                     <img
-                        src={ReadingIllustration}
+                        src="undraw_artificial-intelligence_fuvd.svg"
                         alt="Reading Illustration"
                         className="w-full max-w-md mx-auto"
                     />
