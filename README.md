@@ -1,10 +1,10 @@
-# 🚀 AI-Powered Document Summarization System
+#  AI-Powered Document Summarization System
 
-A web-based platform that allows users to summarize text using Traditional algorithm such as TF-IDF and Aho-Corasick algorithms and generate clean, human-readable summaries via BART-Large-CNN.
+A web-based platform that allows users to summarize text using Traditional algorithm such as TF-IDF and Aho-Corasick algorithms and generate clean, human-readable summaries via Gemini LLM
 
 ---
 
-## 🧩 System Features
+##  System Features
 
 - **Text Summarization using a Hybrid Approach:**
   - 🔹 **TF-IDF**: Extracts statistically significant sentences based on word frequency.
@@ -13,14 +13,14 @@ A web-based platform that allows users to summarize text using Traditional algor
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 | Layer         | Technology        |
 |---------------|-------------------|
 | Frontend      | React, TailwindCSS, JSX, CSS |
 | Algorithm Used  | Aho-Corasick + TF-IDF |
-| Api | facebook-bart-large-CNN | 
-| Hybrid Summarization | TF-IDF + Aho-Corasick + facebook-bart-large-cnn |
+| Api | Gemini LLM | 
+| Hybrid Summarization | TF-IDF + Aho-Corasick + Gemini LLM |
 
 ---
 
