@@ -7,6 +7,8 @@ import { Sparkle } from 'lucide-react';
 import ClipLoader from "react-spinners/ClipLoader";
 import { STOPWORDS } from "../Utils/stopwords.jsx";
 import { askGemini } from "../Utils/api.jsx"
+import { diffWords } from 'diff';
+import { jsPDF } from "jspdf";
 
 
 
@@ -21,6 +23,7 @@ function Summarizer() {
   const [keywords, setKeywords] = useState([]);
   const [keywordsWithScores, setKeywordsWithScores] = useState([]);
   const [summarySentences, setSummarySentences] = useState([]);
+  const [abstractiveSummary, setAbstractiveSummary] = useState('');
   const [outputInfo, setOutputInfo] = useState({
   size: '',
   wordCount: 0,
@@ -41,6 +44,8 @@ function Summarizer() {
  */
 
 const calculateTFIDF = (documents) => {
+
+  console.log(documents)
   // Calculate Term Frequency (TF)
   const tfs = documents.map(doc => {
     const words = doc
@@ -58,7 +63,6 @@ const calculateTFIDF = (documents) => {
     Object.keys(tf).forEach(word => {
       tf[word] = tf[word] / totalWords;
     });
-
     return tf;
   });
 
@@ -87,22 +91,25 @@ const calculateTFIDF = (documents) => {
   const tfidf = tfs.map(tf => {
     const scores = {};
     Object.keys(tf).forEach(word => {
+      // Multiply the TF * idf
       scores[word] = tf[word] * idf[word];
     });
+
     return scores;
+    console.log(scores)
   });
 
+  console.log(tfidf)
   return tfidf;
 };
 
   /**
  * This class implements the Aho-Corasick algorithm for multi-pattern string searching. 
- * It builds a trie structure from given keywords, then augments it with failure links that act like shortcuts, 
+ * It builds a trie structure from given keywords selected by TF-IDF, then augments it with failure links that act like shortcuts, 
  * so when a mismatch occurs during scanning, the search can jump to the longest valid suffix instead of restarting from the root. 
  * This makes searching efficient (linear in text length) and also enables detection of overlapping matches, 
  * meaning multiple keywords can be found in one pass through the text.
  */
-
   class AhoCorasick {
     constructor(keywords) {
       this.root = this.buildTrie(keywords);
@@ -126,6 +133,7 @@ const calculateTFIDF = (documents) => {
       return root;
     }
 
+    //Building failure links
     buildFailureLinks() {
       const queue = [];
       this.root.fail = null;
@@ -177,21 +185,29 @@ const calculateTFIDF = (documents) => {
     }
   }
 
+
+/**
+ * This function is the core of the TextSense summarization system.
+ * It uses a two-step "Hybrid" approach:
+ * 1. EXTRACTIVE STEP: Acts like a highlighter, identifying the most important sentences from the original text.
+ *    - It uses TF-IDF class to find the most significant keywords.
+ *    - It uses the Aho-Corasick algorithm to rapidly find sentences containing those keywords.
+ * 2. ABSTRACTIVE STEP: Uses the Gemini AI to rewrite the selected sentences into a final, fluent summary.
+ * This combination aims to be both accurate and efficient, especially for shorter texts.
+ */
 const generateSummary = async () => {
   setLoading(true);
 
   try {
-    // ---- Preprocessing ----
+    //  Preprocessing 
     const sentences = text
       .split(/(?<=[.!?])\s+(?=[A-Z])/)
       .map((s) => s.trim())
       .filter((s) => s.length > 20);
 
-    // ---- TF-IDF Timing ----
-    const startTF = performance.now();
+
     const tfidfScores = calculateTFIDF(sentences);
-    const endTF = performance.now();
-    const tfidfTime = endTF - startTF;
+
 
     // Get keywords with scores
     const keywordsWithScores = Object.entries(
@@ -209,8 +225,7 @@ const generateSummary = async () => {
     setKeywords(keywordsWithScores.map(([word]) => word));
     setKeywordsWithScores(keywordsWithScores);
 
-    // ---- Aho-Corasick Timing ----
-    const startAC = performance.now();
+
     const ac = new AhoCorasick(keywordsWithScores.map(([word]) => word));
 
     const scoredSentences = sentences.map((sentence, index) => {
@@ -231,8 +246,7 @@ const generateSummary = async () => {
         keywords: [...uniqueMatches],
       };
     });
-    const endAC = performance.now();
-    const ahoTime = endAC - startAC;
+
 
     // ---- Sentence Selection ----
     const totalWords = text.split(" ").length;
@@ -262,8 +276,7 @@ const generateSummary = async () => {
     setExtractiveCount(refinedCount);
     setExtractiveSummary(extractiveSummary);
 
-    // ---- Gemini Timing ----
-    const startGem = performance.now();
+
     let refinedSummary = "";
     try {
       refinedSummary = await askGemini(extractiveSummary);
@@ -285,19 +298,8 @@ const generateSummary = async () => {
       wordCount: wc,
       characters: charCount
     });
-    const endGem = performance.now();
-    const geminiTime = endGem - startGem;
 
-    const results = {
-      reference: text,
-      extractive: extractiveSummary,
-      abstractive: refinedSummary,
-      timings: {
-        tfidf: tfidfTime,
-        aho: ahoTime,
-        gemini: geminiTime,
-      },
-    };
+    
   } catch (error) {
     console.error("Summarization error:", error);
     Swal.fire("Error", "Failed to generate summary.", "error");
@@ -320,7 +322,7 @@ const showResultsPopup = (keywordsWithScores, summarySentences) => {
           `).join('')}
         </ul>
         <h3 class="font-bold mb-2">Selected Sentences:</h3>
-        <ol class="list-decimal pl-5 max-h-40 overflow-y-auto">
+        <ol class="list-decimal pl-8  max-h-40 overflow-y-auto">
           ${summarySentences.map(s => `
             <li class="py-1">${s.text}</li>
           `).join('')}
@@ -336,30 +338,61 @@ const showResultsPopup = (keywordsWithScores, summarySentences) => {
   });
 };
 
-const showComparisonPopup = (extractive, abstractive) => {
-  Swal.fire({
-    title: 'Comparison of Summaries',
-    html: `
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
-        <!-- Extractive Summary -->
-        <div>
-          <h3 class="font-bold mb-2">Extractive Summary</h3>
-          <textarea
-            class="w-full border rounded-md p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 h-[580px] resize-none overflow-y-auto"
-            readonly
-          >${extractive || 'No extractive summary yet'}</textarea>
-          <div>Word Count: ${extractiveCount} words</div>
-        </div>
+const generateDiffHTML = (oldText, newText) => {
+  const diff = diffWords(oldText || '', newText || '');
+  return diff
+    .map(part => {
+      const color = part.added ? '#16a34a' : part.removed ? '#dc2626' : 'inherit';
+      const background = part.added
+        ? 'rgba(34,197,94,0.1)'
+        : part.removed
+        ? 'rgba(239,68,68,0.1)'
+        : 'transparent';
+      return `<span style="color:${color}; background:${background}">${part.value}</span>`;
+    })
+    .join('');
+};
 
-        <!-- Abstractive Summary -->
-        <div>
-          <h3 class="font-bold mb-2">Abstractive Summary</h3>
-          <textarea
-            class="w-full border rounded-md p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 h-[580px] resize-none overflow-y-auto"
-            readonly
-          >${abstractive || 'No abstractive summary yet'}</textarea>
-          <div>Word Count: ${outputInfo.wordCount} words</div>
-        </div>
+
+const showComparisonPopup = (extractive, abstractive) => {
+  const diffHTML = generateDiffHTML(extractive, abstractive);
+
+  Swal.fire({
+    title: 'Summary Comparison',
+    html: `
+      <div class="flex justify-center mb-4">
+        <button id="tab-extractive" class="tab-btn bg-purple-500 text-white px-4 py-2 rounded-l-md">Extractive</button>
+        <button id="tab-abstractive" class="tab-btn bg-gray-200 text-gray-700 px-4 py-2">Abstractive</button>
+        <button id="tab-diff" class="tab-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-r-md">Comparison</button>
+      </div>
+
+      <!-- Extractive -->
+      <div id="panel-extractive" class="tab-panel block">
+        <h3 class="font-bold mb-2 text-left">Extractive Summary</h3>
+        <textarea
+          class="w-full border rounded-md p-3 text-gray-700 focus:outline-none h-[580px] resize-none overflow-y-auto"
+          readonly
+        >${extractive || 'No extractive summary yet'}</textarea>
+        <div class="text-left mt-2 text-sm text-gray-600">Word Count: ${extractiveCount} words</div>
+      </div>
+
+      <!-- Abstractive -->
+      <div id="panel-abstractive" class="tab-panel hidden">
+        <h3 class="font-bold mb-2 text-left">Abstractive Summary</h3>
+        <textarea
+          class="w-full border rounded-md p-3 text-gray-700 focus:outline-none h-[580px] resize-none overflow-y-auto"
+          readonly
+        >${abstractive || 'No abstractive summary yet'}</textarea>
+        <div class="text-left mt-2 text-sm text-gray-600">Word Count: ${outputInfo.wordCount} words</div>
+      </div>
+
+      <!-- Diff -->
+      <div id="panel-diff" class="tab-panel hidden">
+        <h3 class="font-bold mb-2 text-left">Differences (Extractive → Abstractive)</h3>
+        <div
+          class="w-full border rounded-md p-3 h-[580px] overflow-y-auto text-sm leading-relaxed"
+          style="white-space: pre-wrap ;"
+        >${diffHTML}</div>
       </div>
     `,
     width: '95%',
@@ -367,9 +400,67 @@ const showComparisonPopup = (extractive, abstractive) => {
     confirmButtonText: 'Close',
     customClass: {
       popup: 'rounded-lg shadow-xl'
+    },
+    didOpen: () => {
+
+     
+
+      const tabs = [
+        { btn: 'tab-extractive', panel: 'panel-extractive' },
+        { btn: 'tab-abstractive', panel: 'panel-abstractive' },
+        { btn: 'tab-diff', panel: 'panel-diff' },
+      ];
+
+      tabs.forEach(({ btn, panel }) => {
+        document.getElementById(btn).addEventListener('click', () => {
+          tabs.forEach(({ btn: b, panel: p }) => {
+            document.getElementById(p).classList.add('hidden');
+            document.getElementById(b).classList.remove('bg-purple-500', 'text-white ');
+            document.getElementById(b).classList.add('bg-gray-200', 'text-gray-700');
+          });
+          document.getElementById(panel).classList.remove('hidden');
+          document.getElementById(btn).classList.add('bg-purple-500', 'text-white');
+          document.getElementById(btn).classList.remove('bg-gray-200', 'text-gray-700');
+        });
+      });
     }
   });
 };
+
+ const saveBtn = (summary) => {
+    const firstWord = summary.split(" ")[0] || 'summary';
+    console.log(summary.split(" "));
+    
+    const pdf = new jsPDF();
+    pdf.text(summary, 10, 10, { maxWidth: 180 });
+    pdf.save(`${firstWord}-summary.pdf`);
+  };
+      
+
+const handlePrint = (summaryText) => {
+  if (!summaryText) {
+    Swal.fire('No Summary', 'Please generate a summary first.', 'warning');
+    return;
+  }
+
+  const printWindow = window.open("", "_blank");
+  printWindow.document.write(`
+    <html>
+      <head><title>Textsense</title></head>
+      <body style="font-family: Arial, sans-serif; padding: 20px;">
+        <pre style="white-space: pre-wrap; word-wrap: break-word;">${summaryText}</pre>
+        <script>
+          window.onload = function() {
+            window.print();
+            window.onafterprint = () => window.close();
+          };
+        </script>
+      </body>
+    </html>
+  `);
+  printWindow.document.close();
+};
+
 
   const startDriver = () => {
     const driverObj = driver({
@@ -451,6 +542,7 @@ const showComparisonPopup = (extractive, abstractive) => {
     });
     driverObj.drive();
   };
+
 
   const handleFileUpload = async (event) => {
   const file = event.target.files[0];
@@ -602,19 +694,22 @@ const showComparisonPopup = (extractive, abstractive) => {
 
             <div className="flex flex-wrap justify-end sm:justify-end gap-2 mt-4 w-full">
               <button 
-                id="copy-button"
-                className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white text-sm sm:text-base rounded-sm cursor-pointer"
-                onClick={() => {
-                  navigator.clipboard.writeText(summary);
-                  Swal.fire('Copied', 'Summary copied to clipboard.', 'success');
-                }}
-                disabled={!summary}
+                id="print-button"
+                className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white text-sm sm:text-base rounded-sm cursor-pointer transition hover:shadow-lg shadow-purple-800"
+                onClick={() => handlePrint(summary)}
               >
-                Copy 
+                Print 
+              </button>
+              <button 
+                id="save-pdf"
+                className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white text-sm sm:text-base rounded-sm cursor-pointer transition hover:shadow-lg shadow-purple-800"
+                onClick={() => saveBtn(summary)}
+              >
+                Save as PDF
               </button>
               <button
                 id="result-button"
-                className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white text-sm sm:text-base rounded-sm cursor-pointer"
+                className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white text-sm sm:text-base rounded-sm cursor-pointer transition hover:shadow-lg shadow-purple-800"
                 onClick={() => {
                   if (keywordsWithScores && summarySentences) {
                     showResultsPopup(keywordsWithScores, summarySentences);
@@ -627,7 +722,7 @@ const showComparisonPopup = (extractive, abstractive) => {
               Show Results
               </button>
              <button
-              className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white text-sm sm:text-base rounded-sm cursor-pointer"
+              className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white text-sm sm:text-base rounded-sm cursor-pointer transition hover:shadow-lg shadow-purple-800"
               id="comparison-button"
               onClick={() => {
                 if (extractiveSummary || summary) {
@@ -640,7 +735,7 @@ const showComparisonPopup = (extractive, abstractive) => {
               Show Comparison
             </button>
             <button
-              className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white text-sm sm:text-base rounded-sm cursor-pointer"
+              className="py-2 px-5 bg-purple-500 hover:bg-purple-600 text-white text-sm sm:text-base rounded-sm cursor-pointer transition hover:shadow-lg shadow-purple-800"
               id="checkinfo-button"
               onClick={() => {
                 if (!summary) return Swal.fire('Info', 'Please generate a summary first', 'info');
