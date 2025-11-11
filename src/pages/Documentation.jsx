@@ -206,6 +206,8 @@ function getSectionContent(title) {
           <li>TF-IDF – Sentence scoring</li>
           <li>Gemini – Abstractive summarization</li>
           <li>TailwindCSS + React – UI/UX</li>
+          <li>NodeJS</li>
+          <li>Express</li>
         </ul>
       );
 
