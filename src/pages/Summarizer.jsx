@@ -402,9 +402,6 @@ const showComparisonPopup = (extractive, abstractive) => {
       popup: 'rounded-lg shadow-xl'
     },
     didOpen: () => {
-
-     
-
       const tabs = [
         { btn: 'tab-extractive', panel: 'panel-extractive' },
         { btn: 'tab-abstractive', panel: 'panel-abstractive' },
@@ -415,7 +412,7 @@ const showComparisonPopup = (extractive, abstractive) => {
         document.getElementById(btn).addEventListener('click', () => {
           tabs.forEach(({ btn: b, panel: p }) => {
             document.getElementById(p).classList.add('hidden');
-            document.getElementById(b).classList.remove('bg-purple-500', 'text-white ');
+            document.getElementById(b).classList.remove('bg-purple-500', 'text-white');
             document.getElementById(b).classList.add('bg-gray-200', 'text-gray-700');
           });
           document.getElementById(panel).classList.remove('hidden');
