@@ -9,6 +9,7 @@ import { STOPWORDS } from "../Utils/stopwords.jsx";
 import { askGemini } from "../Utils/api.jsx"
 import { diffWords } from 'diff';
 import { jsPDF } from "jspdf";
+import mammoth from "mammoth";
 
 
 
@@ -31,9 +32,15 @@ function Summarizer() {
 });
 
 
-  useEffect(() => {
+useEffect(() => {
+  const hasSeenTutorial = localStorage.getItem("hasSeenDriver");
+
+  if (!hasSeenTutorial) {
     startDriver();
-  }, []);
+    localStorage.setItem("hasSeenDriver", "true");
+  }
+}, []);
+
 
 /**
  * This function implements the TF-IDF algorithm, which measures how important words are within a set of documents. 
@@ -47,12 +54,17 @@ const calculateTFIDF = (documents) => {
 
   console.log(documents)
   // Calculate Term Frequency (TF)
-  const tfs = documents.map(doc => {
+  const tfs = documents.map((doc, index) => {
+    console.log(`\n Document ${index + 1}:`, doc);
     const words = doc
       .toLowerCase()
+      .replace(/[^\w\s]/g, "")
       .split(/\s+/)
       .filter(w => !STOPWORDS.has(w));
+    
 
+    
+    console.log(` Filtered Words (stopwords removed) - Doc ${index + 1}:`, words);
     const totalWords = words.length;
     const tf = {};
 
@@ -60,9 +72,12 @@ const calculateTFIDF = (documents) => {
       tf[word] = (tf[word] || 0) + 1;
     });
 
+     console.log(` Raw Word Counts (TF) - Doc ${index + 1}:`, tf);
+
     Object.keys(tf).forEach(word => {
-      tf[word] = tf[word] / totalWords;
+      tf[word] = Number((tf[word] / totalWords).toFixed(4));
     });
+    console.log(` Normalized TF - Doc ${index + 1}:`, tf);
     return tf;
   });
 
@@ -70,33 +85,38 @@ const calculateTFIDF = (documents) => {
   const idf = {};
   const totalDocs = documents.length;
 
-  documents.forEach(doc => {
+  documents.forEach((doc, index) => {
     const words = new Set(
       doc
         .toLowerCase()
+        .replace(/[^\w\s]/g, "")
         .split(/\s+/)
         .filter(w => !STOPWORDS.has(w))
     );
+    console.log(`\n Unique Words in Doc ${index + 1}:`, [...words]);
 
     words.forEach(word => {
       idf[word] = (idf[word] || 0) + 1;
     });
   });
-
+  console.log("\n Document Frequencies (DF):", idf);
   Object.keys(idf).forEach(word => {
-    idf[word] = Math.log(totalDocs / idf[word]);
+    idf[word] = Number(
+      (Math.log(totalDocs / (1 + idf[word])) + 1).toFixed(4));
+
   });
+   console.log("\n Computed IDF scores:", idf);
 
   // Combine TF and IDF into TF-IDF
   const tfidf = tfs.map(tf => {
     const scores = {};
     Object.keys(tf).forEach(word => {
       // Multiply the TF * idf
-      scores[word] = tf[word] * idf[word];
+      scores[word] = Number((tf[word] * idf[word]).toFixed(4));
     });
-
+    
     return scores;
-    console.log(scores)
+
   });
 
   console.log(tfidf)
@@ -207,6 +227,8 @@ const generateSummary = async () => {
 
 
     const tfidfScores = calculateTFIDF(sentences);
+    console.log("TF-IDF SCORES")
+    console.log(tfidfScores)
 
 
     // Get keywords with scores
@@ -214,8 +236,12 @@ const generateSummary = async () => {
       tfidfScores.reduce((acc, score) => {
         Object.keys(score).forEach((word) => {
           acc[word] = (acc[word] || 0) + score[word];
+          console.log(acc[word])
+          console.log(score[word])
         });
+        console.log(acc)
         return acc;
+        
       }, {})
     )
       .sort((a, b) => b[1] - a[1])
@@ -223,6 +249,7 @@ const generateSummary = async () => {
       .filter(([word]) => word.length > 2);
 
     setKeywords(keywordsWithScores.map(([word]) => word));
+    console.log(keywordsWithScores)
     setKeywordsWithScores(keywordsWithScores);
 
 
@@ -283,6 +310,11 @@ const generateSummary = async () => {
       setSummary(refinedSummary);
     } catch (geminiError) {
       console.error("Gemini failed:", geminiError);
+      Swal.fire(
+        'Summarization Failed', 
+        'Abstractive Summarization failed, using now the extractive summarization.',
+        'warning' 
+      );
       refinedSummary = extractiveSummary;
       setSummary(extractiveSummary);
     }
@@ -541,57 +573,71 @@ const handlePrint = (summaryText) => {
   };
 
 
-  const handleFileUpload = async (event) => {
+const handleFileUpload = async (event) => {
   const file = event.target.files[0];
 
-  if (file && file.type === 'application/pdf') {
-    setPdfFile(file);
+  if (!file) return;
 
-    try {
-      setLoading(true);
+  const allowedTypes = [
+    "application/pdf",
+    "text/plain",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  ];
 
-      const extractedText = await pdfToText(file);
-      const wordCount = extractedText.trim().split(/\s+/).length;
+  if (!allowedTypes.includes(file.type)) {
+    Swal.fire("Error", "Please upload a PDF, TXT, or DOCX file.", "error");
+    return;
+  }
 
-      // Input Size Constraint
-      if (wordCount < 7001) {
-        setText(extractedText);
-        if (wordCount <= 700) {
-          Swal.fire(
-            'Small Document',
-            `This is a small document and has a ${wordCount} words. The summary might be too short or vague.`,
-            'info'
-          );
-        } else if (wordCount <= 2500) {
-          Swal.fire(
-            'Medium Document',
-            `This is a medium document and has a ${wordCount} words. Summarization may take longer or lose detail.`,
-            'info'
-          );
-        } else if (wordCount > 4500) {
-          Swal.fire(
-            'Large Document',
-            `This is a large document and has a ${wordCount} words. Ready to summarize!`,
-            'info'
-          );
-        }
-      } else {
-        Swal.fire(
-            'Super Large Document',
-            `This is a  super large document and has a ${wordCount} words. Please Upload a PDF File!`,
-            'warning'
-          );
-       }
+  setLoading(true);
 
-    } catch (error) {
-      console.error('Error extracting text from PDF:', error);
-      Swal.fire('Error', 'Failed to extract text from PDF. Please try again.', 'error');
-    } finally {
-      setLoading(false);
+  try {
+    let extractedText = "";
+
+    if (file.type === "application/pdf") {
+      extractedText = await pdfToText(file);
     }
 
-  } else {
-    Swal.fire('Error', 'Please upload a valid PDF file.', 'error');
+
+    if (file.type === "text/plain") {
+      extractedText = await file.text();
+    }
+
+
+    if (file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+      const arrayBuffer = await file.arrayBuffer();
+      const result = await mammoth.extractRawText({ arrayBuffer });
+      extractedText = result.value;
+    }
+
+
+    const wordCount = extractedText.trim().split(/\s+/).length;
+
+
+    if (wordCount < 7001) {
+      setText(extractedText);
+
+      if (wordCount <= 700) {
+        Swal.fire("Small Document", `This document has ${wordCount} words.`, "info");
+      } else if (wordCount <= 2500) {
+        Swal.fire("Medium Document", `This document has ${wordCount} words.`, "info");
+      } else if (wordCount > 4500) {
+        Swal.fire("Large Document", `This document has ${wordCount} words.`, "info");
+      }
+    } else {
+      Swal.fire(
+        "Super Large Document",
+        `This document has ${wordCount} words. Please upload a smaller file.`,
+        "warning"
+      );
+    }
+
+  } catch (error) {
+    console.error("Error extracting text:", error);
+    Swal.fire("Error", "Failed to extract text. Try again.", "error");
+
+  } finally {
+    setLoading(false);
   }
 };
 
@@ -635,7 +681,7 @@ const handlePrint = (summaryText) => {
               Upload
               <input
                 type="file"
-                accept="application/pdf"
+                accept=".pdf, .txt, .docx, application/pdf, text/plain, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                 className="hidden"
                 onChange={handleFileUpload}
               />
