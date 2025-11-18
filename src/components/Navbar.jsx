@@ -10,7 +10,7 @@ function Navbar() {
     <div className="w-full fixed top-0 left-0 bg-white shadow-md z-50">
 
       <div className="flex items-center justify-between px-6 py-4">
-        <h1 className="text-2xl font-bold text-purple-700">TextSense</h1>
+        <h1 className="text-2xl font-bold text-purple-700 bg:">TextSense</h1>
 
         
         <button
