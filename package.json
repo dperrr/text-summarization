@@ -23,6 +23,7 @@
     "js-rouge": "^3.0.0",
     "jspdf": "^3.0.3",
     "lucide-react": "^0.479.0",
+    "mammoth": "^1.11.0",
     "natural": "^8.1.0",
     "pdfjs-dist": "^4.10.38",
     "react": "^19.0.0",
