@@ -64,7 +64,7 @@ const calculateTFIDF = (documents) => {
     
 
     
-    console.log(` Filtered Words (stopwords removed) - Doc ${index + 1}:`, words);
+    console.log(` fFiltered Words (stopwords removed) - Doc ${index + 1}:`, words);
     const totalWords = words.length;
     const tf = {};
 

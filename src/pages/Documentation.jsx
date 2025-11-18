@@ -91,7 +91,9 @@ function getSectionContent(title) {
       return (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {["Keyword filtering", "Hybrid summarization", "Paste or upload text", "Check Comparison of Extractive and Abstractive Summarization", "Show results of summarization"].map(f => (
-            <div className="bg-white p-4 rounded-xl shadow hover:shadow-md transition border border-purple-100">
+            <div 
+            key={f}
+            className="bg-white p-4 rounded-xl shadow hover:shadow-md transition border border-purple-100">
               {f}
             </div>
           ))}
