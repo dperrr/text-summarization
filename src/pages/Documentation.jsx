@@ -78,7 +78,7 @@ function getSectionContent(title) {
         </>
       );
 
-    case "How It Works":
+    case "How It Workss":
       return (
         <ul className="list-disc pl-6 space-y-2">
           <li><strong>TF-IDF:</strong> Scores sentence relevance.</li>

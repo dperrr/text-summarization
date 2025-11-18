@@ -53,7 +53,7 @@ useEffect(() => {
 const calculateTFIDF = (documents) => {
 
   console.log(documents)
-  // Calculate Term Frequency (TF)
+  // Calculate Term Frequency (TF))
   const tfs = documents.map((doc, index) => {
     console.log(`\n Document ${index + 1}:`, doc);
     const words = doc
