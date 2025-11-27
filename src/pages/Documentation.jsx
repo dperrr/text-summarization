@@ -78,7 +78,7 @@ function getSectionContent(title) {
         </>
       );
 
-    case "How It Works":
+    case "How It Workss":
       return (
         <ul className="list-disc pl-6 space-y-2">
           <li><strong>TF-IDF:</strong> Scores sentence relevance.</li>
@@ -91,7 +91,9 @@ function getSectionContent(title) {
       return (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {["Keyword filtering", "Hybrid summarization", "Paste or upload text", "Check Comparison of Extractive and Abstractive Summarization", "Show results of summarization"].map(f => (
-            <div className="bg-white p-4 rounded-xl shadow hover:shadow-md transition border border-purple-100">
+            <div 
+            key={f}
+            className="bg-white p-4 rounded-xl shadow hover:shadow-md transition border border-purple-100">
               {f}
             </div>
           ))}
@@ -206,6 +208,8 @@ function getSectionContent(title) {
           <li>TF-IDF – Sentence scoring</li>
           <li>Gemini – Abstractive summarization</li>
           <li>TailwindCSS + React – UI/UX</li>
+          <li>NodeJS</li>
+          <li>Express</li>
         </ul>
       );
 
