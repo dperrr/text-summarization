@@ -11,6 +11,7 @@ import { diffWords } from 'diff';
 import { jsPDF } from "jspdf";
 import mammoth from "mammoth";
 import { accScore } from '../Utils/score.jsx';
+import { structuredSummary } from '../Utils/api.jsx';
 
 
 
@@ -26,8 +27,11 @@ function Summarizer() {
   const [keywordsWithScores, setKeywordsWithScores] = useState([]);
   const [summarySentences, setSummarySentences] = useState([]);
   const [abstractiveSummary, setAbstractiveSummary] = useState('');
+  // const [structuredSummary, setStructuredSummary] = useState ('');
   const [rougeScores, setRougeScores] = useState(null);
+  const [grammar, setGrammar] = useState(null);
   const [outputInfo, setOutputInfo] = useState({
+  
   size: '',
   wordCount: 0,
   characters: 0
@@ -316,6 +320,7 @@ const generateSummary = async () => {
         
       }
       setSummary(refinedSummary);
+    
      
     } catch (geminiError) {
       console.error("Gemini failed:", geminiError);
@@ -331,6 +336,29 @@ const generateSummary = async () => {
       console.log("ROUGE scores:", scores);
       setRougeScores(scores); 
       console.log(rougeScores)
+
+      const sumw = await structuredSummary(refinedSummary);
+      const showStructured = () => {
+      Swal.fire({
+        title: "Structured Summary",
+        html: `
+          <p><strong>Paragraph Type:</strong> ${sumw.paragraphType}</p>
+          <p><strong>Main Idea:</strong> ${sumw.mainIdea}</p>
+          <p><strong>Key Points:</strong></p>
+          <ul style="text-align: left;">
+            ${sumw.keyPoints.map(point => `<li>${point}</li>`).join("")}
+          </ul>
+          <p><strong>Grammar Accuracy:</strong> ${sumw.grammarAccuracy}%</p>
+          <p><strong>Tone:</strong> ${sumw.tone}</p>
+        `,
+        width: 600,
+        showCloseButton: true,
+        focusConfirm: false,
+        confirmButtonText: "Close",
+      });
+    };
+    showStructured();
+
 
     const wc = refinedSummary.trim().split(/\s+/).length;
     const charCount = refinedSummary.length;
@@ -399,6 +427,8 @@ const generateDiffHTML = (oldText, newText) => {
 };
 
 
+
+
 const showComparisonPopup = (extractive, abstractive) => {
   const diffHTML = generateDiffHTML(extractive, abstractive);
   const origDiffHTML = generateDiffHTML(text, abstractive);
@@ -409,6 +439,7 @@ const showComparisonPopup = (extractive, abstractive) => {
       <div class="flex justify-center mb-4">
         <button id="tab-extractive" class="tab-btn bg-purple-500 text-white px-4 py-2 rounded-l-md">Extractive</button>
         <button id="tab-abstractive" class="tab-btn bg-gray-200 text-gray-700 px-4 py-2">Abstractive</button>
+        <button id="tab-struct" class="tab-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-r-md">Structured Summary</button>
         <button id="tab-diff" class="tab-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-r-md">Compare Models</button>
         <button id="tab-orig" class="tab-btn bg-gray-200 text-gray-700 px-4 py-2 rounded-r-md">Compare to Original</button>
       </div>
@@ -432,6 +463,10 @@ const showComparisonPopup = (extractive, abstractive) => {
         >${abstractive || 'No abstractive summary yet'}</textarea>
         <div class="text-left mt-2 text-sm text-gray-600">Word Count: ${outputInfo.wordCount} words</div>
       </div>
+      
+    <div id="panel-abstractive" className="tab-panel hidden">
+  <h3 className="font-bold mb-2 text-left">Abstractive Summary</h3>
+
 
       <!-- Diff -->
       <div id="panel-diff" class="tab-panel hidden">
@@ -680,7 +715,7 @@ const handleFileUpload = async (event) => {
           <div className="bg-gray-800 p-4 rounded-xl w-full max-w-5xl">
             <h3 className="text-lg font-semibold mb-2">ROUGE Evaluation</h3>
 
-            <div className="space-y-1 text-sm">
+            <div className="space-y-1 text-sm flex">
               <div>
                 <strong>ROUGE-1:</strong> {rougeScores["rouge-1"].f1.toFixed(3)}
               </div>

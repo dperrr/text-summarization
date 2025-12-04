@@ -13,12 +13,16 @@ export async function askGemini(extractiveSummary) {
 export async function structuredSummary(abstractiveSummary) {
   const res = await fetch(import.meta.env.VITE_BACKEND_URL + "/api/structured-summary", {
     method: "POST",
-    headers: { "Content-Type": "application/json "},
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ abstractiveSummary })
   });
-  const json = await res.json()
-  return json.structuredSummary;
+
+  if (!res.ok) throw new Error("Failed to fetch structured summary");
+
+  const json = await res.json();
+  return json; 
 }
+
 
 export async function evaluate(text, abstractive) {
   console.log("Sending to backend:", { reference: text, abstractive });
