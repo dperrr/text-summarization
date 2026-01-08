@@ -1,28 +1,73 @@
-#  AI-Powered Document Summarization System
+# AI-Powered Document Summarization System
 
-A web-based platform that allows users to summarize text using Traditional algorithm such as TF-IDF and Aho-Corasick algorithms and generate clean, human-readable summaries via Gemini LLM
-
----
-
-##  System Features
-
-- **Text Summarization using a Hybrid Approach:**
-  - 🔹 **TF-IDF**: Extracts statistically significant sentences based on word frequency.
-  - 🔹 **Aho-Corasick**: Detects and prioritizes key phrases from defined keyword list by TF-IDF.
-  - 🔹 **GEMINI LLM**: A deep learning model used to enhance coherence and contextual meaning through abstractive summarization.
+A web-based platform that enables users to generate concise, clean, and human‑readable summaries from large text documents. The system uses a **hybrid extractive–abstractive approach**, combining traditional NLP algorithms with a modern Large Language Model (LLM).
 
 ---
 
-##  Tech Stack
+## 🔍 Overview
 
-| Layer         | Technology        |
-|---------------|-------------------|
-| Frontend      | React, TailwindCSS, JSX, CSS |
-| Algorithm Used  | Aho-Corasick + TF-IDF |
-| Api | Gemini LLM | 
-| Hybrid Summarization | TF-IDF + Aho-Corasick + Gemini LLM |
+This system first identifies important sentences and key phrases using classical algorithms, then refines the extracted content using **Gemini LLM** to produce coherent and context‑aware summaries.
 
 ---
 
+## ✨ System Features
+
+### 🧠 Hybrid Text Summarization
+
+* **TF‑IDF (Term Frequency–Inverse Document Frequency)**
+  Identifies statistically significant sentences based on word importance and frequency distribution.
+
+* **Aho‑Corasick Algorithm**
+  Efficiently detects and prioritizes key phrases generated from TF‑IDF keyword extraction.
+
+* **Gemini LLM (Abstractive Layer)**
+  Enhances fluency, coherence, and contextual understanding by transforming extracted content into natural, human‑readable summaries.
+
+---
+
+## 🏗️ System Architecture
+
+1. User submits raw text via the web interface
+2. TF‑IDF scores and selects important sentences
+3. Aho‑Corasick detects relevant keywords and phrases
+4. Filtered content is sent to Gemini LLM API
+5. Final summarized output is returned to the user
+
+---
+
+## 🧰 Tech Stack
+
+| Layer              | Technology                        |
+| ------------------ | --------------------------------- |
+| Frontend           | React, JSX, Tailwind CSS, CSS     |
+| Backend            | Node.js, Express                  |
+| NLP Algorithms     | TF‑IDF, Aho‑Corasick              |
+| LLM API            | Gemini LLM                        |
+| Summarization Type | Hybrid (Extractive + Abstractive) |
+
+---
+
+## 🔗 Project Repositories
+
+* **Frontend Repository**
+  *(This repository)*
+
+* **Backend Repository**
+  👉 [https://github.com/dperrr/text-summarization-backend)
 
 
+
+---
+
+## 🚀 Future Enhancements
+
+* Support for PDF,txt and DOCX uploads
+* TF-IDF SCORES AND SELECTED SENTENCES
+* COMPARSION OF EXTRACTIVE AND ABSTRACTIVE SUMMARIZATION
+* BLEU AND ROUGE SCORES
+
+---
+
+## 📌 License
+
+This project is for academic and educational purposes.
