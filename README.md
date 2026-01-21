@@ -1,6 +1,6 @@
-# AI-Powered Document Summarization System
+# AI-Powered Text Summariaztion and Search Using TF-IDF and Aho-Corasick Algorithm
 
-A web-based platform that enables users to generate concise, clean, and human‑readable summaries from large text documents. The system uses a **hybrid extractive–abstractive approach**, combining traditional NLP algorithms with a modern Large Language Model (LLM).
+This research aims to develop a web-based summarization platform designed to mitigate information overload. The system employs a dual-stage hybrid approach: an initial extractive layer filters the source material for key informational units, followed by an abstractive LLM layer that paraphrases the content. This methodology ensures that the output maintains high factual fidelity while achieving the readability of human-authored summaries.
 
 ---
 
@@ -44,6 +44,7 @@ This system first identifies important sentences and key phrases using classical
 | NLP Algorithms     | TF‑IDF, Aho‑Corasick              |
 | LLM API            | Gemini LLM                        |
 | Summarization Type | Hybrid (Extractive + Abstractive) |
+| Benchmark Testing  | Python                            |
 
 ---
 
@@ -59,7 +60,7 @@ This system first identifies important sentences and key phrases using classical
 
 ---
 
-## 🚀 Future Enhancements
+## 🚀 Other Features
 
 * Support for PDF,txt and DOCX uploads
 * TF-IDF SCORES AND SELECTED SENTENCES
